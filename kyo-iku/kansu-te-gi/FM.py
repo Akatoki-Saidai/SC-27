@@ -1,5 +1,5 @@
 import education
-#from 「関数があるスクリプト名」 import 「関数があるクラス名」
+#import 「関数があるスクリプト名」
 
 
 def main():
