@@ -53,6 +53,10 @@ def youbi(datetime_str):
     曜日を抽出します
     """
     try:
+        # 文字列を datetime オブジェクトに変換
         dt_object = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
         weekday = dt_object.strftime('%A')
         return weekday
+    except ValueError:
+        print(f"エラー: 無効な日時文字列のフォーマットです: {datetime_str}")
+        return None
