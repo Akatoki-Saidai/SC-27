@@ -1,3 +1,5 @@
+# 桜井
+
 import serial
 import pynmea2
 import time
@@ -7,9 +9,9 @@ port = "/dev/serial0"
 baudrate = 9600
 
 def idokeido():
-  """
-  緯度と経度を抽出します
-  """
+    """
+    緯度と経度を抽出します
+    """
     try:
         with serial.Serial(port, baudrate, timeout=1) as ser:
             while True:
