@@ -69,16 +69,3 @@ def get_weekday_from_datetime_str(datetime_str):
     except ValueError:
         print(f"エラー: 無効な日時文字列のフォーマットです: {datetime_str}")
         return None
-
-# 使用例
-if __name__ == "__main__":
-    print("GPSデータの取得を開始します。")
-    latitude, longitude, japanese_time, day_of_week = get_gps_data()
-
-    if latitude is not None and longitude is not None:
-        print(f"緯度: {latitude}")
-        print(f"経度: {longitude}")
-        print(f"日本時間: {japanese_time}")
-        print(f"曜日: {day_of_week}")
-    else:
-        print("GPSデータの取得に失敗しました。")
