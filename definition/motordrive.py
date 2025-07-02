@@ -1,6 +1,6 @@
 # 新井
 
-import RPi.GPIO as GPIO  # GPIOモジュールをインポート
+# import RPi.GPIO as GPIO  # GPIOモジュールをインポート
 from gpiozero import Motor
 from time import sleep
 from gpiozero.pins.pigpio import PiGPIOFactory
@@ -122,7 +122,7 @@ def move(direction, power, duration):
             print("無効な方向が指定されました。")
             stop_motors(motor_right, motor_left)
             return
-        sleep(0.05) # 短い間隔で更新
+        sleep(0.025) # 短い間隔で更新
 
     # 指定された時間だけ駆動（加速に要した時間をdurationから引く場合は調整が必要）
     remaining_duration = max(0, duration - (steps * 0.05)) # 加速にかかった時間を考慮
