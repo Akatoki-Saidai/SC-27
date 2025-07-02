@@ -6,4 +6,4 @@ test: images/test # optional test images
 nc:
   1  # number of classes
 names:
-  0: colorcoon
+  0: colorcone
