@@ -1,30 +1,31 @@
 # 新井
 
-import RPi.GPIO as GPIO  # GPIOモジュールをインポート
+# import RPi.GPIO as GPIO  # GPIOモジュールをインポート
 from time import sleep
 import motordrive # 作成したmotordrive.pyをインポート
 
 def main():
     # GPIOピン番号モードの設定
-    GPIO.setmode(GPIO.BCM)  # または GPIO.setmode(GPIO.BOARD)
+    # GPIO.setmode(GPIO.BCM)  # または GPIO.setmode(GPIO.BOARD)
 
     try:
         print("--- motordrive.py の move() 関数テスト ---")
 
-        print("前進 (w): 強さ0.7で、1秒間動かす")
-        motordrive.move('w', 0.7, 1)
+        print("前進 (w): 強さ1.0で、5秒間動かす")
+        motordrive.move('w', 1.0, 5)
+        sleep(1)
+        """
+
+        print("後退 (s): 強さ1.0で、1.5秒間動かす")
+        motordrive.move('s', 1.0, 1.5)
         sleep(1)
 
-        print("後退 (s): 強さ0.5で、1.5秒間動かす")
-        motordrive.move('s', 0.5, 1.5)
+        print("右モーターのみ前進 (e): 強さ1.0で、2秒間動かす")
+        motordrive.move('e', 1.0, 2)
         sleep(1)
 
-        print("右モーターのみ前進 (e): 強さ0.8で、2秒間動かす")
-        motordrive.move('e', 0.8, 2)
-        sleep(1)
-
-        print("左モーターのみ前進 (q): 強さ0.8で、2秒間動かす")
-        motordrive.move('q', 0.8, 2)
+        print("左モーターのみ前進 (q): 強さ1.0で、2秒間動かす")
+        motordrive.move('q', 1.0, 2)
         sleep(1)
 
         print("左旋回 (a): 強さ0.9で、1.5秒間動かす")
@@ -34,6 +35,7 @@ def main():
         print("右旋回 (d): 強さ0.9で、1.5秒間動かす")
         motordrive.move('d', 0.9, 1.5)
         sleep(1)
+        """
         
         print("Finish!!!!!!!!!!")
 
@@ -45,7 +47,7 @@ def main():
             motordrive.stop_motors(motor_right, motor_left)
     finally:
         # GPIOクリーンアップ
-        GPIO.cleanup()
+        # GPIO.cleanup()
         print("GPIOクリーンアップ完了。")
 
 if __name__ == "__main__":
