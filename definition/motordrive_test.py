@@ -11,27 +11,27 @@ def main():
     try:
         print("--- motordrive.py の move() 関数テスト ---")
 
-        print("前進 (w): 1秒間、強さ0.7で動かす")
+        print("前進 (w): 強さ0.7で、1秒間動かす")
         motordrive.move('w', 0.7, 1)
         sleep(1)
 
-        print("後退 (s): 1.5秒間、強さ0.5で動かす")
+        print("後退 (s): 強さ0.5で、1.5秒間動かす")
         motordrive.move('s', 0.5, 1.5)
         sleep(1)
 
-        print("右モーターのみ前進 (e): 2秒間、強さ0.8で動かす")
+        print("右モーターのみ前進 (e): 強さ0.8で、2秒間動かす")
         motordrive.move('e', 0.8, 2)
         sleep(1)
 
-        print("左モーターのみ前進 (q): 2秒間、強さ0.8で動かす")
+        print("左モーターのみ前進 (q): 強さ0.8で、2秒間動かす")
         motordrive.move('q', 0.8, 2)
         sleep(1)
 
-        print("左旋回 (a): 1.5秒間、強さ0.9で動かす")
+        print("左旋回 (a): 強さ0.9で、1.5秒間動かす")
         motordrive.move('a', 0.9, 1.5)
         sleep(1)
 
-        print("右旋回 (d): 1.5秒間、強さ0.9で動かす")
+        print("右旋回 (d): 強さ0.9で、1.5秒間動かす")
         motordrive.move('d', 0.9, 1.5)
         sleep(1)
         
