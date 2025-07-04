@@ -1,5 +1,3 @@
-# 桜井
-
 import gps
 
 def main():

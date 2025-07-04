@@ -1,5 +1,3 @@
-# 新井
-
 # import RPi.GPIO as GPIO  # GPIOモジュールをインポート
 from time import sleep
 import motordrive # 作成したmotordrive.pyをインポート

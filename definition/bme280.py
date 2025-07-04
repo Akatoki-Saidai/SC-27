@@ -1,4 +1,3 @@
-#岡本 武藤
 # https://raw.githubusercontent.com/SWITCHSCIENCE/BME280/a43306ece7e17f3009748599e1ca4d0160729559/Python27/bme280_sample.py
 #coding: utf-8
 #a

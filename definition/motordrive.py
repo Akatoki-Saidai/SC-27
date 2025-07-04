@@ -1,5 +1,3 @@
-# 新井
-
 # import RPi.GPIO as GPIO  # GPIOモジュールをインポート
 from gpiozero import Motor
 from time import sleep

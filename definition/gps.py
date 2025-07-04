@@ -1,5 +1,3 @@
-# sakurai
-
 import serial
 import pynmea2
 import time

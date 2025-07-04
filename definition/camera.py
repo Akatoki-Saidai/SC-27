@@ -1,5 +1,3 @@
-# 神田，吉澤、宍倉
-
 # camera
 import os
 import time
