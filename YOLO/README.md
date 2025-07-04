@@ -1,6 +1,6 @@
-# YOLOv10n
+# YOLOv11n
 
-class1_training.pyを実行するとYOLO10n.ptを元にimage，labelの中の画像ファイルとアノテーションデータを用いて学習します<Br><Br>
+class1_training.pyを実行するとYOLO11n.ptを元にimage，labelの中の画像ファイルとアノテーションデータを用いて学習します<Br><Br>
 
 datasetの形式<Br>
 
