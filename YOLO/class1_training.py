@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-# YOLOv10nモデルをロード
+# YOLOv11nモデルをロード
 model = YOLO("yolov11n.pt")
 
 # モデルをyamlファイルでトレーニング
