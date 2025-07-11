@@ -10,8 +10,6 @@ from bno055 import BNO055
 
 def main():
 
-
- 
     # 温湿度気圧センサセットアップ
     try:
         bus = smbus.SMBus(1)
@@ -50,10 +48,9 @@ def main():
         print(f"An error occurred in setting bno055: {e}")
         make_csv.print("serious_error", f"An error occurred in setting bno055: {e}")
         return
+
     phase = 1  # フェーズ0から開始
-
     ready = False
-
 
     try:
         print("セットアップ完了")
@@ -61,17 +58,19 @@ def main():
         make_csv.print("phase", 0)
 
         while True:
-            # ************************************************** #
-            #             待機フェーズ(phase = 0)                #
-            # ************************************************** #
+            # --------------------------- #
+            #        待機フェーズ         #
+            # --------------------------- #
             if phase == 0:
                 try:
                     data = bme.read_data()
                     pressure = bme.compensate_P(data)
+                    time.sleep(1.0)
                     alt_1 = bme.altitude(pressure, qnh=baseline)
                     print(f"alt_1: {alt_1}")
+                    time.sleep(0.5)
 
-                    if ready and alt_1 >= 10:
+                    if  alt_1 >= 10:
                         phase = 1
                         print("Go to falling phase")
                         make_csv.print("msg", "Go to falling phase")
@@ -84,9 +83,10 @@ def main():
                 except Exception as e:
                     print(f"An error occurred in phase 0: {e}")
                     make_csv.print("error", f"An error occurred in phase 0: {e}")
-            # ************************************************** #
-            #             落下フェーズ(phase = 1)                #
-            # ************************************************** #
+
+            # --------------------------- #
+            #        落下フェーズ         #
+            # --------------------------- #
             elif phase == 1:
                 try:
                     consecutive_count = 0
@@ -126,15 +126,13 @@ def main():
                             '''
                             make_csv.print("msg","ニクロム線切断完了")
                             print("ニクロム線切断完了")
-
                             return  # 終了
 
                 except Exception as e:
                     print(f"An error occurred in phase 1: {e}")
                     make_csv.print("error", f"An error occurred in phase 1: {e}")
 
-    finally:
-        GPIO.cleanup()
+   
 
 if __name__ == "__main__":
     main()
