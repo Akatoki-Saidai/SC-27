@@ -1,5 +1,7 @@
 # definitionファイル内から，当フェーズを完成させるために必要なものをまずimportして，フローチャートを満たすようにコードを書いてほしい．
 # 別ファイルを参照するライブラリがあるらしい
+
+# ラズパイ上でのみ，当フォルダに関数定義ファイルを移してimportすることにしました．
 import time
 import smbus
 import RPi.GPIO as GPIO
