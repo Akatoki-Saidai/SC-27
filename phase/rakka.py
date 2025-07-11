@@ -9,15 +9,9 @@ from bme280 import BME280Sensor
 from bno055 import BNO055
 
 def main():
-    # GPIO初期化
-    GPIO.setmode(GPIO.BCM)
-    pin = 16
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, 0)
 
-    phase = 0
-    ready = True  # 状況に応じて設定
 
+ 
     # 温湿度気圧センサセットアップ
     try:
         bus = smbus.SMBus(1)
@@ -56,6 +50,10 @@ def main():
         print(f"An error occurred in setting bno055: {e}")
         make_csv.print("serious_error", f"An error occurred in setting bno055: {e}")
         return
+    phase = 1  # フェーズ0から開始
+
+    ready = False
+
 
     try:
         print("セットアップ完了")
@@ -63,6 +61,9 @@ def main():
         make_csv.print("phase", 0)
 
         while True:
+            # ************************************************** #
+            #             待機フェーズ(phase = 0)                #
+            # ************************************************** #
             if phase == 0:
                 try:
                     data = bme.read_data()
@@ -83,7 +84,9 @@ def main():
                 except Exception as e:
                     print(f"An error occurred in phase 0: {e}")
                     make_csv.print("error", f"An error occurred in phase 0: {e}")
-
+            # ************************************************** #
+            #             落下フェーズ(phase = 1)                #
+            # ************************************************** #
             elif phase == 1:
                 try:
                     consecutive_count = 0
@@ -109,16 +112,21 @@ def main():
                             time.sleep(0.5)
 
                         if consecutive_count >= 5:
-                            make_csv.print("msg", "ニクロム線切断開始")
+                            make_csv.print("msg","ニクロム線切断開始")
                             print("ニクロム線切断開始")
 
-                            # ニクロム線切断
+                            #ニクロム線切断
+                            pin = 16
+                            '''
+                            GPIO.setmode(GPIO.BCM)
+                            GPIO.setup(pin, GPIO.OUT)
                             GPIO.output(pin, 1)
                             time.sleep(5)
                             GPIO.output(pin, 0)
-
-                            make_csv.print("msg", "ニクロム線切断完了")
+                            '''
+                            make_csv.print("msg","ニクロム線切断完了")
                             print("ニクロム線切断完了")
+
                             return  # 終了
 
                 except Exception as e:
