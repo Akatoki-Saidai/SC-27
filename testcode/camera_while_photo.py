@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
             # 写真撮影
             photo_filename = f"photo_{int(time.time())}.jpg"
-            cv2.imwrite(f"./sc27/YOLO/V3_photo/{photo_filename}", frame)
+            cv2.imwrite(f"./sc27/YOLO/v3_photo/{photo_filename}", frame)
             print(f"photo taked: {photo_filename}")
             
             # 結果表示
