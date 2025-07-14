@@ -9,7 +9,7 @@ if __name__ == '__main__':
     try:
         # カメラをセットアップ
         picam2 = Picamera2()
-        config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (480, 320)})
+        config = picam2.create_preview_configuration({"format": 'XRGB8888'})
         # config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (480, 320)}, transform=Transform(hflip=1, vflip=1))  # カメラが逆さの場合はこれで修正
         picam2.configure(config)
 
