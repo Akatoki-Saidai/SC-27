@@ -33,7 +33,7 @@ goal_lat, goal_lon = 40.14389563045866, 139.98732883121738 # 緯度，経度
 wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')
 
 # 初期位置の緯度経度を取得
-start_lat, start_lon = gps.get_latitude(), gps.get_longitude()
+start_lat, start_lon = gps.idokeido()
 
 # 移動していない判定のカウンター
 no_movement_count = 0
@@ -43,19 +43,20 @@ motordrive.stop()
 time.sleep(1)
 
 #5秒進んだ先での現在位置を得る
-current_lat = gps.get_latitude()
-current_lon = gps.get_longitude()
-
-
+current_lat, current_lon = gps.idokeido()
 
 # FutureWarningを抑制
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 phase = 2
-            if phase != 2:
-                phase = 2
+
+    try:
+        # ここから無限ループ
+        while True:
+            # ************************************************** #
+            #             遠距離フェーズ(phase = 2)              #
+            # ************************************************** #
             elif phase == 2:
-                motordrive.setup()
                 print(current_lat, current_lon)  # 現在位置
 
                 # 距離と角度を計算し、表示
@@ -64,7 +65,7 @@ phase = 2
                 print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
 
                 # 移動していない判定
-                if distance_to_goal == 2323232323:  # calculate_distance_and_angle関数で移動していないと判定された場合
+                if distance_to_goal == 2323232323:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
                     no_movement_count += 1
                     print("移動していない判定:", no_movement_count, "回")
                     if no_movement_count >= 23:
