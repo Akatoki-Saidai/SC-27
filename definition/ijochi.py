@@ -11,7 +11,7 @@ abnormal_value_table = {
         "accel": {"min": 0, "max": 50},
         "gyro": {"min": 0, "max": 45},
         "mag": {"min": 0, "max": 250},
-        "liner_accel": {"min": 0, "max": 25},
+        "linear_accel": {"min": 0, "max": 25},
         "gravity": {"min": 0, "max": 15},
         "temperature": {"min": 0, "max": 60},
     },
