@@ -1,5 +1,6 @@
 import smbus
 
+# 諸関係のやつimport
 import serial
 import time
 import math
