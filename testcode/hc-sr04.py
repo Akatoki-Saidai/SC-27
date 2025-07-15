@@ -2,8 +2,11 @@ import pigpio
 import time
 
 # GPIOピンの設定
-TRIG = 23  # トリガー
-ECHO = 24  # エコー
+TRIG = 6  # トリガー
+ECHO = 14  # エコー
+
+# 音の速度
+sound_velosity = 34370
 
 pi = pigpio.pi()
 if not pi.connected:
@@ -37,8 +40,9 @@ def measure_distance():
             return None  # タイムアウト
 
     pulse_duration = pulse_end - pulse_start
-    # 距離を計算（音速は約34300cm/s）
-    distance = pulse_duration * 17150
+    
+    # 距離計算
+    distance = pulse_duration * (sound_velosity / 2)
     distance = round(distance, 2)
     return distance
 
