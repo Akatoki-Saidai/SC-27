@@ -89,20 +89,22 @@ def move(direction, power, duration):
         direction (str): 'w'(前進), 's'(後退), 'a'(左旋回), 'd'(右旋回), 'q'(左モーターのみ前進), 'e'(右モーターのみ前進)
         power (float): モーターの強さ (0.0から1.0まで)
         duration (float): モーターを動かす時間 (秒) - 最大30秒
+    Returns:
+        int: スタックを検知した場合 1、それ以外 0
     """
     global bno # BNO055オブジェクトを参照
 
     if not (0.0 <= power <= 1.0):
         print("Error: powerは0.0から1.0の間で指定してください。")
-        return
+        return 0
     if not (0.0 <= duration <= 30.0):
         print("Error: durationは0.0秒から30.0秒の間で指定してください。")
-        return
+        return 0
 
     motor_right, motor_left = setup_motors()
     if not (motor_right and motor_left):
         print("モーターがセットアップされていません。")
-        return
+        return 0
 
     # 加速フェーズ
     steps = int(power / delta_power) + 1
@@ -131,12 +133,14 @@ def move(direction, power, duration):
         else:
             print("無効な方向が指定されました。")
             stop_motors(motor_right, motor_left)
-            return
+            return 0
         sleep(0.025) # 短い間隔で更新
         acceleration_time += 0.025
 
     # 駆動フェーズ
     remaining_duration = max(0, duration - acceleration_time) # 加速にかかった時間を考慮
+    
+    is_stacked = 0 # スタック検知の結果 (0: スタックなし, 1: スタックあり)
 
     if remaining_duration > 0:
         # 指定パワーで駆動
@@ -164,10 +168,10 @@ def move(direction, power, duration):
             start_driving_time = time.time()
             while (time.time() - start_driving_time) < remaining_duration:
                 # スタック検知
-                is_stacking = True
+                is_current_segment_stacking = True
                 for _ in range(5): # 1秒間 (0.2s * 5回) ジャイロ値をチェック
                     if not bno: # BNO055が利用できない場合はスキップ
-                        is_stacking = False
+                        is_current_segment_stacking = False
                         break
                     Gyro = bno.getVector(BNO055.VECTOR_GYROSCOPE)
                     # 旋回時と非旋回時で検知基準を変更
@@ -175,44 +179,30 @@ def move(direction, power, duration):
                         # 旋回方向への角速度が十分に小さい場合にスタックと判断
                         # Z軸が鉛直方向と仮定
                         if abs(Gyro[2]) > 0.75: # 旋回中であればZ軸の角速度は大きい
-                            is_stacking = False
+                            is_current_segment_stacking = False
                             break
                     else: # 非旋回時 (前進、後退、片輪駆動)
                         # 全体の角速度が小さい場合にスタックと判断
                         gyro_magnitude = np.sqrt(Gyro[0]**2 + Gyro[1]**2 + Gyro[2]**2)
                         if gyro_magnitude > 0.75:
-                            is_stacking = False
+                            is_current_segment_stacking = False
                             break
                     time.sleep(0.2) # 0.2秒待機
 
-                if is_stacking:
+                if is_current_segment_stacking:
                     print("スタックを検知しました！")
                     csv.print('warning', 'stacking now!')
-                    # スタック解除のための動作
-                    stop_motors(motor_right, motor_left)
-                    move('s', power, 1) # 後退
-                    stop_motors(motor_right, motor_left)
-                    # ランダムな方向に少し旋回してスタックから抜け出す試み
-                    if np.random.rand() > 0.5:
-                        move('d', power, 0.5) # 右旋回
-                    else:
-                        move('a', power, 0.5) # 左旋回
-                    stop_motors(motor_right, motor_left)
-                    move('w', power, 1) # 前進
-                    start_driving_time = time.time() # スタック解除後、残り時間を再計算
+                    is_stacked = 1 # スタックフラグを立てる
 
-                # 機体がひっくり返っているか検知して補正
+                # 機体がひっくり返っているか検知して補正（スタック状態とは独立してチェック）
                 try:
                     if bno and bno.getVector(BNO055.VECTOR_GRAVITY) is not None:
-                        # Z軸の重力加速度成分が正であればひっくり返っていると判断
-                        # 厳密には、機体の向きによってどの軸を見るか変わる可能性がありますが、ここでは仮にZ軸を使用
                         gravity_z = bno.getVector(BNO055.VECTOR_GRAVITY)[2]
                         if gravity_z > 0.5: # 閾値は調整が必要
                             print('機体がひっくり返っています！姿勢補正を開始します。')
                             csv.print('warning', 'muki_hantai')
                             accel_start_time = time.time()
                             while bno.getVector(BNO055.VECTOR_GRAVITY)[2] > 0.5 and (time.time() - accel_start_time) < 5:
-                                # 前進することで姿勢を戻そうと試みる
                                 motor_right.value = power
                                 motor_left.value = power
                                 time.sleep(0.5)
@@ -222,14 +212,13 @@ def move(direction, power, duration):
                             if (time.time() - accel_start_time) >= 5:
                                 print('5秒以内に元の向きに戻りませんでした。')
                                 csv.print('warning', 'orientation_correction_failed')
-                                # ここでさらに複雑なリカバリー処理を追加することも可能
-                                move('d', power, 1) # 右旋回
-                                move('a', power, 1) # 左旋回
+                                # 姿勢補正失敗時の追加のリカバリーは、呼び出し元で判断できるように、ここでは実施しない
                             else:
                                 print('姿勢が元の向きに戻りました。')
                                 csv.print('msg', 'muki_naotta')
                                 stop_motors(motor_right, motor_left)
                                 start_driving_time = time.time() # 姿勢補正後、残り時間を再計算
+
                 except Exception as e:
                     print(f"An error occurred while changing the orientation: {e}")
                     csv.print('error', f"An error occurred while changing the orientation: {e}")
@@ -239,3 +228,4 @@ def move(direction, power, duration):
 
     # 最終停止
     stop_motors(motor_right, motor_left)
+    return is_stacked # スタック検知の結果を返す
