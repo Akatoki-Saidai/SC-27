@@ -6,7 +6,7 @@ import time
 import numpy as np
 
 from bno055 import BNO055 # BNO055を使う場合はコメント解除
-import make_csv as csv # CSV出力を使う場合はコメント解除
+import make_csv # CSV出力を使う場合はコメント解除
 
 delta_power = 0.1 # スムーズな加速・減速のための刻み幅
 
@@ -40,7 +40,7 @@ def setup_motors():
         return motor_right, motor_left
     except Exception as e:
         print(f"An error occurred in setting motor_driver: {e}")
-        csv.print('serious_error', f"An error occurred in setting motor_driver: {e}")
+        make_csv.print('serious_error', f"An error occurred in setting motor_driver: {e}")
         return None, None
 
 def stop_motors(motor_right, motor_left):
@@ -191,7 +191,7 @@ def move(direction, power, duration):
 
                 if is_current_segment_stacking:
                     print("スタックを検知しました！")
-                    csv.print('warning', 'stacking now!')
+                    make_csv.print('warning', 'stacking now!')
                     is_stacked = 1 # スタックフラグを立てる
 
                 # 機体がひっくり返っているか検知して補正（スタック状態とは独立してチェック）
@@ -200,7 +200,7 @@ def move(direction, power, duration):
                         gravity_z = bno.getVector(BNO055.VECTOR_GRAVITY)[2]
                         if gravity_z > 0.5: # 閾値は調整が必要
                             print('機体がひっくり返っています！姿勢補正を開始します。')
-                            csv.print('warning', 'muki_hantai')
+                            make_csv.print('warning', 'muki_hantai')
                             accel_start_time = time.time()
                             while bno.getVector(BNO055.VECTOR_GRAVITY)[2] > 0.5 and (time.time() - accel_start_time) < 5:
                                 motor_right.value = power
@@ -211,17 +211,17 @@ def move(direction, power, duration):
                                 time.sleep(0.1)
                             if (time.time() - accel_start_time) >= 5:
                                 print('5秒以内に元の向きに戻りませんでした。')
-                                csv.print('warning', 'orientation_correction_failed')
+                                make_csv.print('warning', 'orientation_correction_failed')
                                 # 姿勢補正失敗時の追加のリカバリーは、呼び出し元で判断できるように、ここでは実施しない
                             else:
                                 print('姿勢が元の向きに戻りました。')
-                                csv.print('msg', 'muki_naotta')
+                                make_csv.print('msg', 'muki_naotta')
                                 stop_motors(motor_right, motor_left)
                                 start_driving_time = time.time() # 姿勢補正後、残り時間を再計算
 
                 except Exception as e:
                     print(f"An error occurred while changing the orientation: {e}")
-                    csv.print('error', f"An error occurred while changing the orientation: {e}")
+                    make_csv.print('error', f"An error occurred while changing the orientation: {e}")
 
                 # 残り時間があれば駆動を続ける
                 sleep(min(0.1, (start_driving_time + remaining_duration) - time.time())) # 細かくチェックしながら残り時間を待つ
