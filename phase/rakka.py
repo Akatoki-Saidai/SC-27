@@ -14,20 +14,18 @@ def main():
 
     # 温湿度気圧センサセットアップ
     try:
-        bus = smbus.SMBus(1)
         bme = BME280Sensor(bus_number=1)
 
-        for i in range(10):
+        for i in range(20):
             try:
                 bme.read_data()
             except Exception as e:
                 print(f"An error occurred during empty measurement in BME: {e}")
                 make_csv.print('msg', f"An error occurred during empty measurement in BME: {e}")
 
-        data = bme.read_data()
-        pressure = bme.compensate_P(data)
+        pressure = bme.pressure()
         make_csv.print("alt_base_press", pressure)
-        baseline = bme.baseline(pressure)
+        baseline = bme.baseline()
         make_csv.print("msg", "all clear(bme280)")
 
     except Exception as e:
@@ -38,12 +36,12 @@ def main():
     # 9軸センサセットアップ
     try:
         bno = BNO055()
-        if bno.begin() is not True:
+        if not bno.begin():
             print("Error initializing device")
             make_csv.print("serious_error", "Error initializing device")
             return
         time.sleep(1)
-        bno.setExternalCrystalUse(True)
+        bno.set_external_crystal(True)
         make_csv.print("msg", "all clear(bno055)")
 
     except Exception as e:
@@ -65,8 +63,9 @@ def main():
             # --------------------------- #
             if phase == 0:
                 try:
-                    data = bme.read_data()
-                    pressure = bme.compensate_P(data)
+                    temperature = bme.temperature()
+                    pressure = bme.pressure()
+                    humidity = bme.humidity()
                     time.sleep(1.0)
                     alt_1 = bme.altitude(pressure, qnh=baseline)
                     print(f"alt_1: {alt_1}")
@@ -94,11 +93,10 @@ def main():
                     consecutive_count = 0
 
                     for _ in range(10):
-                        data = bme.read_data()
-                        pressure = bme.compensate_P(data)
+                        pressure = bme.pressure()
                         alt_2 = bme.altitude(pressure, qnh=baseline)
 
-                        linear_accel = bno.getVector(BNO055.VECTOR_LINEARACCEL)
+                        linear_accel = bno.linear_acceleration()
                         accel_x, accel_y, accel_z = linear_accel
 
                         print(f"accel_x: {accel_x}, accel_y: {accel_y}, accel_z: {accel_z}")

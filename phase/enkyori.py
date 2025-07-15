@@ -8,8 +8,9 @@ import warnings
 import pyproj
 
 # センサ類import
+from bno055 import BNO055
+from bme280 import BME280Sensor
 import motordrive
-import bno
 import gps
 
 ##################################################
@@ -39,7 +40,7 @@ start_lat, start_lon = gps.idokeido()
 # 移動していない判定のカウンター
 no_movement_count = 0
 #遠距離フェーズ最初の5秒前進を実行
-motordrive.move(w, 1.0, 5.0)
+motordrive.move('w', 1.0, 5.0)
 motordrive.stop()
 time.sleep(1)
 
@@ -49,7 +50,19 @@ current_lat, current_lon = gps.idokeido()
 # FutureWarningを抑制
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+# BNO055とBME280のインスタンス生成
+bno = BNO055()
+bme = BME280Sensor(bus_number=1)
+
+# BNO055初期化
+if not bno.begin():
+    print("Failed bno initialize")
+    exit(1)
+# 外部クリスタル使用
+bno.set_external_crystal(True)
+
 phase = 2
+
 
     try:
         # ここから無限ループ
@@ -60,20 +73,20 @@ phase = 2
             elif phase == 2:
                 print(current_lat, current_lon)  # 現在位置
 
-                # 距離と角度を計算し、表示
-                distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon)
-                print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
-                print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
+            # 距離と角度を計算し、表示
+            distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon)
+            print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
+            print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
 
-                # 移動していない判定
-                if distance_to_goal == 2323232323:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
-                    no_movement_count += 1
-                    print("移動していない判定:", no_movement_count, "回")
-                    if no_movement_count >= 23:
-                        print("移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
-                        break  # whileループを抜けて近距離フェーズに移行
-                    else:
-                        no_movement_count = 0  # 移動が検出されたらカウンターをリセット
+            # 移動していない判定
+            if distance_to_goal == 2323232323:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
+                no_movement_count += 1
+                print("移動していない判定:", no_movement_count, "回")
+                if no_movement_count >= 23:
+                    print("移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
+                    break  # whileループを抜けて近距離フェーズに移行
+            else:
+                no_movement_count = 0  # 移動が検出されたらカウンターをリセット
 
                 # 進行方向を決定
                 if angle_to_goal > 0:
@@ -132,12 +145,15 @@ phase = 2
                     make_csv.print('error', f"An error occured while changing the orientation: {e}")
 
 
-    # 現在地を更新
-                current_lat = gps.get_latitude()
-                current_lon = gps.get_longitude()
+            # 現在地を更新
+            current_lat = gps.get_latitude()
+            current_lon = gps.get_longitude()
 
-                # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
-                if distance_to_goal <= 10:
-                    print("近距離フェーズに移行")
-                    phase = 3
-                    break
+            # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
+            if distance_to_goal <= 10:
+                print("近距離フェーズに移行")
+                phase = 3
+                break
+            
+    except Exception as e:
+        print(f"遠距離フェーズでエラーが発生: {e}")

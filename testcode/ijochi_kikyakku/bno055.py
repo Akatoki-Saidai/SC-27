@@ -667,7 +667,7 @@ class BNO055(object):
                 result[i] -= 65536
         return result
 
-    def read_euler(self):
+    def euler(self):
         try:
             """Return the current absolute orientation as a tuple of heading, roll,
             and pitch euler angles in degrees.
@@ -678,7 +678,7 @@ class BNO055(object):
         except Exception as e:
             print(f"An error occured in bno055 reading euler: {e}")
 
-    def read_magnetometer(self):
+    def magnetometer(self):
         try:
             """Return the current magnetometer reading as a tuple of X, Y, Z values
             in micro-Teslas.
@@ -689,7 +689,7 @@ class BNO055(object):
         except Exception as e:
             print(f"An error occured in bno055 reading magnetometer: {e}")
 
-    def read_gyroscope(self):
+    def gyroscope(self):
         try:
             """Return the current gyroscope (angular velocity) reading as a tuple of
             X, Y, Z values in degrees per second.
@@ -700,7 +700,7 @@ class BNO055(object):
         except Exception as e:
             print(f"An error occured in bno055 reading gyroscope: {e}")
 
-    def read_accelerometer(self):
+    def accelerometer(self):
         try:
             """Return the current accelerometer reading as a tuple of X, Y, Z values
             in meters/second^2.
@@ -711,7 +711,7 @@ class BNO055(object):
         except Exception as e:
             print(f"An error occured in bno055 reading accelerometer: {e}")
 
-    def read_linear_acceleration(self):
+    def linear_acceleration(self):
         try:
             """Return the current linear acceleration (acceleration from movement,
             not from gravity) reading as a tuple of X, Y, Z values in meters/second^2.
@@ -722,7 +722,7 @@ class BNO055(object):
         except Exception as e:
             print(f"An error occured in bno055 reading linear acceleration: {e}")
 
-    def read_gravity(self):
+    def gravity(self):
         try:
             """Return the current gravity acceleration reading as a tuple of X, Y, Z
             values in meters/second^2.
@@ -733,7 +733,7 @@ class BNO055(object):
         except Exception as e:
             print(f"An error occured in bno055 reading gravity: {e}")
 
-    def read_quaternion(self):
+    def quaternion(self):
         try:
             """Return the current orientation as a tuple of X, Y, Z, W quaternion
             values.
@@ -746,7 +746,7 @@ class BNO055(object):
         except Exception as e:
             print(f"An error occured in bno055 reading quaternion: {e}")
 
-    def read_temp(self):
+    def temperature(self):
         try:
             """Return the current temperature in Celsius."""
             temperature = self._read_signed_byte(BNO055_TEMP_ADDR)
@@ -801,30 +801,30 @@ if __name__ == "__main__":
             
             # 4元数方位
             # Orientation as a quaternion:
-            #x,y,z,w = bno.read_quaterion()
+            #x,y,z,w = bno.quaterion()
             
             # 温度(℃)
-            # temp_c = bno.read_temp()
+            # temp_c = bno.temperature()
 
             # オイラー角(deg)
-            # heading, roll, pitch = bno.read_euler()
+            # heading, roll, pitch = bno.euler()
 
             # 地磁気(μT)
-            mag_x,mag_y,mag_z = bno.read_magnetometer()
+            mag_x,mag_y,mag_z = bno.magnetometer()
             
             # ジャイロ(deg/s)
-            gyro_x,gyro_y,gyro_z = bno.read_gyroscope()
+            gyro_x,gyro_y,gyro_z = bno.gyroscope()
 
             # 加速度(m s^-2)
             # Accelerometer data (in meters per second squared):
-            # x,y,z = bno.read_accelerometer()
+            # x,y,z = bno.accelerometer()
 
             # 線形加速度(m s^-2)  (全加速度から重力加速度を取り除いたもの)
             # returned in meters per second squared):
-            liner_accel_x,liner_accel_y,liner_accel_z = bno.read_linear_acceleration()
+            liner_accel_x,liner_accel_y,liner_accel_z = bno.linear_acceleration()
 
             # 重力加速度(m s^-2)
-            gravity_x,gravity_y,gravity_z = bno.read_gravity()
+            gravity_x,gravity_y,gravity_z = bno.gravity()
 
             print(f"magnetometer: \nmag_x:{mag_x:.4f}  mag_y:{mag_y:.4f}  mag_z:{mag_z:.4f}")
             print(f"gyroscope: \ngyro_x:{gyro_x:.4f}  gyro_y:{gyro_y:.4f}  mag_z:{gyro_z:.4f}")
