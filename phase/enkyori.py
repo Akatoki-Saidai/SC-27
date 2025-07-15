@@ -1,12 +1,51 @@
 import time
 import motordrive
 import bno
+import gps
 
+##################################################
+#                      入力                      #
+##################################################
+# モータを起動させたときの機体の回転速度ω[rad/s]
+omega = math.pi / 2  # rad/s
+
+# WGS84楕円体のパラメータを定義
+a = 6378137.0
+b = 6356752.314245
+f = (a - b) / a
+
+##################################################
+#                      入力                      #
+##################################################
+# 能代宇宙広場 (ゴール地点の例)
+# 緯度経度をWGS84楕円体に基づいて設定
+goal_lat, goal_lon = 40.14389563045866, 139.98732883121738 # 緯度，経度
+
+# pyprojを使ってWGS84楕円体に基づく投影を定義
+wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')
+
+# 初期位置の緯度経度を取得
+start_lat, start_lon = gps.get_latitude(), gps.get_longitude()
+
+# 移動していない判定のカウンター
+no_movement_count = 0
+#遠距離フェーズ最初の5秒前進を実行
+motordrive.move(w, 1.0, 5.0)
+motordrive.stop()
+time.sleep(1)
+
+#5秒進んだ先での現在位置を得る
+current_lat = gps.get_latitude()
+current_lon = gps.get_longitude()
+
+phase = 2
+            if phase != 2:
+                phase = 2
             elif phase == 2:
                 print(current_lat, current_lon)  # 現在位置
 
                 # 距離と角度を計算し、表示
-                distance_to_goal, angle_to_goal = calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon)
+                distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon)
                 print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
                 print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
 
@@ -48,8 +87,9 @@ import bno
                 motordrive.check_stuck(is_stacked)
                 #スタックしたときの処理が行われる
                 
-                motordrive.stop()
                 #モーター止める
+                motordrive.stop()
+                time.sleep(1)
 
                     # 機体がひっくり返ってたら回る
                 try:
@@ -77,8 +117,8 @@ import bno
 
 
     # 現在地を更新
-                current_lat = get_latitude()
-                current_lon = get_longitude()
+                current_lat = gps.get_latitude()
+                current_lon = gps.get_longitude()
 
                 # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
                 if distance_to_goal <= 10:
