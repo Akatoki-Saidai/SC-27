@@ -229,3 +229,36 @@ def move(direction, power, duration):
     # 最終停止
     stop_motors(motor_right, motor_left)
     return is_stacked # スタック検知の結果を返す
+
+def check_stuck(is_stacked):
+    #スタック解除の動作を実行する
+    try:
+        # スタック検知時の処理
+        if is_stacking == True:
+            # GPIO5の出力を1にして、LED点灯
+            for i in range(0,2):
+                GPIO.output(5,1)
+                time.sleep(0.5)
+                GPIO.output(5,0)
+                time.sleep(0.5)
+            GPIO.output(5, 1)
+        
+            print("Stacking detected!")
+            make_csv.print("warning", "Stacking detected!")
+
+            # スタック解除のための動作
+            motor.backward(motor_right, motor_left)  # 3秒後退
+            time.sleep(3)
+            motor.rightturn(motor_right, motor_left)  # 1秒右旋回
+            time.sleep(1)
+            motor.forward(motor_right, motor_left)  # 2秒前進
+            time.sleep(2)
+            motor.brake(motor_right, motor_left)  # 停止
+
+            # GPIO17の出力を0にして、LED消灯
+            GPIO.output(17, 0)
+            time.sleep(1)
+
+    except Exception as e:
+        print(f"An error occurred in stack check: {e}")
+        make_csv.print("error", f"An error occurred in stack check: {e}")
