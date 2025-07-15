@@ -1,33 +1,23 @@
 import gps
 
-def main():
-    """
-    gps.py の関数を実行し、緯度、経度、日本時間、曜日を表示します。
-    """
-    print("GPSデータ取得を開始します...")
-
-    # 緯度と経度を取得
-    latitude, longitude = gps.idokeido()
+# 使用例
+if __name__ == '__main__':
+    print("緯度経度を取得中...")
+    latitude, longitude = idokeido()
     if latitude is not None and longitude is not None:
         print(f"緯度: {latitude}, 経度: {longitude}")
     else:
-        print("緯度と経度の取得に失敗しました。")
+        print("緯度経度の取得に失敗しました。")
 
-    print("\n日本時間と曜日を取得します...")
-
-    # 日本時間を取得
-    japan_time_str = gps.zikan()
-    if japan_time_str:
-        print(f"日本時間: {japan_time_str}")
-
-        # 曜日を取得
-        day_of_week = gps.youbi(japan_time_str)
-        if day_of_week:
-            print(f"曜日: {day_of_week}")
+    print("\n日本時間を取得中...")
+    japan_time = zikan()
+    if japan_time is not None:
+        print(f"日本時間: {japan_time}")
+        print("\n曜日を抽出中...")
+        weekday_result = youbi(japan_time)
+        if weekday_result is not None:
+            print(f"曜日: {weekday_result}")
         else:
-            print("曜日の取得に失敗しました。")
+            print("曜日の抽出に失敗しました。")
     else:
         print("日本時間の取得に失敗しました。")
-
-if __name__ == "__main__":
-    main()
