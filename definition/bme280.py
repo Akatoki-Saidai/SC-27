@@ -1,10 +1,10 @@
 # https://raw.githubusercontent.com/SWITCHSCIENCE/BME280/a43306ece7e17f3009748599e1ca4d0160729559/Python27/bme280_sample.py
 #coding: utf-8
-#a
+# pressureで気圧，tempertureで温度，humudityで湿度を返します
 
 import smbus
 import time
-import make_csv
+# import make_csv
 
 
 class BME280Sensor:
@@ -93,7 +93,7 @@ class BME280Sensor:
         self.compensate_P(pres_raw)
         self.compensate_H(hum_raw)
 
-        return  pres_raw #pres_rawを返す
+        return  temp_raw, pres_raw, hum_raw
 
     def compensate_P(self, adc_P):
         global t_fine
@@ -145,20 +145,35 @@ class BME280Sensor:
             var_h = 0.0
         #print("hum : %6.2f ％" % (var_h))
 
+    def pressure(self):
+        _, pres_raw, _ = self.read_data()
+        com_pressure = self.compensate_P(pres_raw)
+        return com_pressure
+
+    def temperature(self):
+        temp_raw, _, _ = self.read_data()
+        com_temperature = self.compensate_T(temp_raw)
+        return com_temperature
+
+    def humidity(self):
+        _, _, hum_raw = self.read_data()
+        com_humidity = self.compensate_H(hum_raw)
+        return com_humidity
+
     def altitude(self, pressure, qnh = 1013.25):
         #p0 = self.baseline(pressure)  # 海面更生気圧 (Pa)
         altitude = (((1 - (pow((pressure / qnh), 0.190284))) * 145366.45) / 0.3048) / 10  #p0
         #altitude = ((pow((qnh / pressure), (1.0 / 5.257)) - 1) * (temperature + 273.15)) / 0.0065
         print("altitude : %6.2f" % (altitude))
         data = [altitude,pressure]
-        make_csv.print("alt_press",data)
         return altitude
 
-    def baseline(self, pressure):
+    def baseline(self):
         baseline_values = []
         baseline_size = 100
 
         for i in range(baseline_size):
+            pressure = self.pressure()
             baseline_values.append(pressure)
             time.sleep(0.1)
         baseline = sum(baseline_values[:-25]) / len(baseline_values[:-25])
