@@ -39,6 +39,10 @@ def main():
         print("check_stuck()が動くかどうかをテスト")
         motordrive.check_stuck(1)
         time.sleep(1)
+
+        # 本当は以下のように使う
+        # is_stucked = motordrive.move(w, 1.0, 5.0) # スタックしたら返り値で1を返す
+        # motordrive.check_stuck(is_stucked) # 1が入力されたらスタック時の動作を行う
         
         print("Finish!!!!!!!!!!")
 
