@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO  # GPIOモジュールをインポート
 from gpiozero import Motor
-from time import sleep
+import time
 from gpiozero.pins.pigpio import PiGPIOFactory
 import time
 import numpy as np
@@ -43,11 +43,13 @@ def setup_motors():
         make_csv.print('serious_error', f"An error occurred in setting motor_driver: {e}")
         return None, None
 
-def stop_motors(motor_right, motor_left):
+def stop():
     """
     モーターを停止させます。
     徐々に減速して停止します。
     """
+    motor_right, motor_left = setup_motors()
+
     if not (motor_right and motor_left):
         return
 
@@ -73,7 +75,7 @@ def stop_motors(motor_right, motor_left):
 
         motor_right.value = target_r
         motor_left.value = target_l
-        sleep(0.05) # 短い間隔で更新
+        time.sleep(0.05) # 短い間隔で更新
 
     motor_right.value = 0.0
     motor_left.value = 0.0
@@ -132,9 +134,9 @@ def move(direction, power, duration):
             motor_left.value = 0.0
         else:
             print("無効な方向が指定されました。")
-            stop_motors(motor_right, motor_left)
+            stop()
             return 0
-        sleep(0.025) # 短い間隔で更新
+        time.sleep(0.025) # 短い間隔で更新
         acceleration_time += 0.025
 
     # 駆動フェーズ
@@ -216,7 +218,7 @@ def move(direction, power, duration):
                             else:
                                 print('姿勢が元の向きに戻りました。')
                                 make_csv.print('msg', 'muki_naotta')
-                                stop_motors(motor_right, motor_left)
+                                stop()
                                 start_driving_time = time.time() # 姿勢補正後、残り時間を再計算
 
                 except Exception as e:
@@ -224,17 +226,17 @@ def move(direction, power, duration):
                     make_csv.print('error', f"An error occurred while changing the orientation: {e}")
 
                 # 残り時間があれば駆動を続ける
-                sleep(min(0.1, (start_driving_time + remaining_duration) - time.time())) # 細かくチェックしながら残り時間を待つ
+                time.sleep(min(0.1, (start_driving_time + remaining_duration) - time.time())) # 細かくチェックしながら残り時間を待つ
 
     # 最終停止
-    stop_motors(motor_right, motor_left)
+    stop()
     return is_stacked # スタック検知の結果を返す
 
 def check_stuck(is_stacked):
     #スタック解除の動作を実行する
     try:
         # スタック検知時の処理
-        if is_stacking == True:
+        if is_stacked == True:
             # GPIO5の出力を1にして、LED点灯
             for i in range(0,2):
                 GPIO.output(5,1)
@@ -247,13 +249,10 @@ def check_stuck(is_stacked):
             make_csv.print("warning", "Stacking detected!")
 
             # スタック解除のための動作
-            motor.backward(motor_right, motor_left)  # 3秒後退
-            time.sleep(3)
-            motor.rightturn(motor_right, motor_left)  # 1秒右旋回
-            time.sleep(1)
-            motor.forward(motor_right, motor_left)  # 2秒前進
-            time.sleep(2)
-            motor.brake(motor_right, motor_left)  # 停止
+            move('s', 1.0, 3)  # 3秒後退
+            move('d', 1.0, 1)  # 1秒右旋回
+            move('w', 1.0, 2)  # 2秒前進
+            stop()  # 停止
 
             # GPIO17の出力を0にして、LED消灯
             GPIO.output(17, 0)

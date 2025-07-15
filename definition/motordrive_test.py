@@ -1,10 +1,15 @@
-# import RPi.GPIO as GPIO  # GPIOモジュールをインポート
+import RPi.GPIO as GPIO  # GPIOモジュールをインポート
 from time import sleep
 import motordrive # 作成したmotordrive.pyをインポート
+import time
 
 def main():
     # GPIOピン番号モードの設定
     # GPIO.setmode(GPIO.BCM)  # または GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(5, GPIO.OUT)
+    GPIO.setup(17, GPIO.OUT)
+
 
     try:
         print("--- motordrive.py の move() 関数テスト ---")
