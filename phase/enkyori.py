@@ -1,4 +1,12 @@
+import smbus
+
+import serial
 import time
+import math
+import warnings
+import pyproj
+
+# センサ類import
 import motordrive
 import bno
 import gps
@@ -38,10 +46,16 @@ time.sleep(1)
 current_lat = gps.get_latitude()
 current_lon = gps.get_longitude()
 
+
+
+# FutureWarningを抑制
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 phase = 2
             if phase != 2:
                 phase = 2
             elif phase == 2:
+                motordrive.setup()
                 print(current_lat, current_lon)  # 現在位置
 
                 # 距離と角度を計算し、表示
