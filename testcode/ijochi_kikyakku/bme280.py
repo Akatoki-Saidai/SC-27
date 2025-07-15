@@ -180,11 +180,11 @@ class BME280Sensor:
 
         return baseline
 
-
-# 使用方法
-sensor = BME280Sensor()
-data = sensor.read_data()  # pres_rawを取得する
-pressure = sensor.compensate_P(data)  # 気圧補正
-#temperature = sensor.compensate_T(data)  # 温度補正
-sensor.altitude(pressure)  # 高度計算
-print('alt_base_press', sensor.baseline(pressure))  # ベースライン計算
+if __name__ == "__main__":
+    # 使用方法
+    sensor = BME280Sensor()
+    data = sensor.read_data()  # pres_rawを取得する
+    pressure = sensor.compensate_P(data)  # 気圧補正
+    #temperature = sensor.compensate_T(data)  # 温度補正
+    sensor.altitude(pressure)  # 高度計算
+    print('alt_base_press', sensor.baseline(pressure))  # ベースライン計算
