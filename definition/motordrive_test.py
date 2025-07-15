@@ -1,40 +1,56 @@
-# import RPi.GPIO as GPIO  # GPIOモジュールをインポート
+import RPi.GPIO as GPIO  # GPIOモジュールをインポート
 from time import sleep
 import motordrive # 作成したmotordrive.pyをインポート
+import time
 
 def main():
     # GPIOピン番号モードの設定
     # GPIO.setmode(GPIO.BCM)  # または GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(5, GPIO.OUT)
+    GPIO.setup(17, GPIO.OUT)
+
 
     try:
         print("--- motordrive.py の move() 関数テスト ---")
 
+        print("--- motorをsetupする。")
+        motordrive.setup_motors()
+
         print("前進 (w): 強さ1.0で、5秒間動かす")
         motordrive.move('w', 1.0, 5)
-        sleep(1)
-        """
+        time.sleep(1)
 
         print("後退 (s): 強さ1.0で、1.5秒間動かす")
         motordrive.move('s', 1.0, 1.5)
-        sleep(1)
+        time.sleep(1)
 
         print("右モーターのみ前進 (e): 強さ1.0で、2秒間動かす")
         motordrive.move('e', 1.0, 2)
-        sleep(1)
+        time.sleep(1)
 
         print("左モーターのみ前進 (q): 強さ1.0で、2秒間動かす")
         motordrive.move('q', 1.0, 2)
-        sleep(1)
+        time.sleep(1)
 
         print("左旋回 (a): 強さ0.9で、1.5秒間動かす")
         motordrive.move('a', 0.9, 1.5)
-        sleep(1)
+        time.sleep(1)
 
         print("右旋回 (d): 強さ0.9で、1.5秒間動かす")
         motordrive.move('d', 0.9, 1.5)
-        sleep(1)
-        """
-        
+        time.sleep(1)
+
+        print("check_stuck()が動くかどうかをテスト")
+        motordrive.check_stuck(1)
+        time.sleep(1)
+
+        # 本当は以下のように使う
+        # is_stucked = motordrive.move(w, 1.0, 5.0) # スタックしたら返り値で1を返す
+        # motordrive.check_stuck(is_stucked) # 1が入力されたらスタック時の動作を行う
+
+        #motordrive.check_stuck(motordrive.move(w, 1.0, 5.0)) #スタック検知付きの移動
+
         print("Finish!!!!!!!!!!")
 
     except KeyboardInterrupt:
