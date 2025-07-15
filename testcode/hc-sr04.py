@@ -2,8 +2,8 @@ import pigpio
 import time
 
 # GPIOピンの設定
-TRIG = 23  # トリガーピン
-ECHO = 24  # エコーピン
+TRIG = 23  # トリガー
+ECHO = 24  # エコー
 
 pi = pigpio.pi()
 if not pi.connected:
