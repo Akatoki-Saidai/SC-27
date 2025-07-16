@@ -31,40 +31,45 @@ abnormal_value_table = {
 # 入力は数値(取得データ変数そのまま引数へ, scalingFactor適用済)
 def abnormal_check(sensor_name, value_name, sensor_value, ERROR_FLAG=True):
     try:
-        # BNOはリストで帰ってくる
-        if isinstance(sensor_value, list):
-            # sensor_valueが全て0の場合は異常値
-            if all(v == 0 for v in sensor_value) and value_name != "gyro":
+        # 値があるときに処理
+        if sensor_value is not None:
+            # BNOはリストで帰ってくる
+            if isinstance(sensor_value, list):
+                # sensor_valueが全て0の場合は異常値
+                if all(v == 0 for v in sensor_value) and value_name != "gyro":
+                    filtered_value = None
+                    try:
+                        if ERROR_FLAG:
+                            raise ValueError(f"{sensor_name} {value_name} is all zero - {sensor_value}")
+                        else:
+                            print(f"{sensor_name} {value_name} is all zero: {sensor_value}")
+                    except ValueError as e:
+                        print(f"Failed to pass value check: {e}")
+                
+                # リストの場合はxyzデータ等とみなし，絶対値比較
+                check_sensor_value = sum(abs(n) for n in sensor_value)
+
+            else:
+                check_sensor_value = sensor_value            
+
+            if abnormal_value_table[sensor_name][value_name]["min"] <= check_sensor_value <= abnormal_value_table[sensor_name][value_name]["max"]:
+                filtered_value = check_sensor_value
+                # print("temperature is normal")
+                
+            else:
                 filtered_value = None
                 try:
                     if ERROR_FLAG:
-                        raise ValueError(f"{sensor_name} {value_name} is all zero - {sensor_value}")
+                        raise ValueError(f"{sensor_name} {value_name} is abnormal - {sensor_value}")
                     else:
-                        print(f"{sensor_name} {value_name} is all zero: {sensor_value}")
+                        print(f"{sensor_name} {value_name} is abnormal: {sensor_value}")
                 except ValueError as e:
                     print(f"Failed to pass value check: {e}")
             
-            # リストの場合はxyzデータ等とみなし，絶対値比較
-            check_sensor_value = sum(abs(n) for n in sensor_value)
-
+            return filtered_value
+        
         else:
-            check_sensor_value = sensor_value            
-
-        if abnormal_value_table[sensor_name][value_name]["min"] <= check_sensor_value <= abnormal_value_table[sensor_name][value_name]["max"]:
-            filtered_value = check_sensor_value
-            # print("temperature is normal")
-            
-        else:
-            filtered_value = None
-            try:
-                if ERROR_FLAG:
-                    raise ValueError(f"{sensor_name} {value_name} is abnormal - {sensor_value}")
-                else:
-                    print(f"{sensor_name} {value_name} is abnormal: {sensor_value}")
-            except ValueError as e:
-                print(f"Failed to pass value check: {e}")
-
-        return filtered_value
+            return None
     
     except Exception as e:
         print(f"An error occurred in abnormal_check: {e}")
