@@ -12,7 +12,7 @@ try:
     msg_types = ['time', 'file', 'func', 'line', 'serious_error', 'error', 'warning', 'msg', 'format_exception', 'phase', 'gnss_time', 'date', 'lat', 'lon', 'alt', 'alt_base_press', 'goal_lat', 'goal_lon', 'raw_temp', 'raw_press', 'raw_hum', 'raw_accel_all_x', 'raw_accel_all_y', 'raw_accel_all_z', 'raw_accel_line_x', 'raw_accel_line_y', 'raw_accel_line_z', 'raw_mag_x', 'raw_mag_y', 'raw_mag_z', 'raw_gyro_x', 'raw_gyro_y', 'raw_gyro_z', 'raw_grav_x', 'raw_grav_y', 'raw_grav_z']
     DEFAULT_DICT = {x : '' for x in msg_types}
 
-    filename = 'raw_log.csv'
+    filename = f'raw_log_{time.time()}.csv'
 
     with open(filename, 'a') as f:
         f.write('\n\n\n\n' + ','.join(msg_types) + '\n')
