@@ -39,34 +39,58 @@ start_lat, start_lon = gps.idokeido()
 
 # 移動していない判定のカウンター
 no_movement_count = 0
-#遠距離フェーズ最初の5秒前進を実行
-motordrive.move('w', 1.0, 5.0)
-motordrive.stop()
-time.sleep(1)
 
-#5秒進んだ先での現在位置を得る
-current_lat, current_lon = gps.idokeido()
+def main():
 
-# FutureWarningを抑制
-warnings.filterwarnings("ignore", category=FutureWarning)
+    # BNO055とBME280のインスタンス生成
+    bno = BNO055()
+    bme = BME280Sensor(bus_number=1)
 
-# BNO055とBME280のインスタンス生成
-bno = BNO055()
-bme = BME280Sensor(bus_number=1)
-
-# BNO055初期化
-if not bno.begin():
-    print("Failed bno initialize")
-    exit(1)
-# 外部クリスタル使用
-bno.set_external_crystal(True)
-
-phase = 2
+    # BNO055初期化
+    if not bno.begin():
+        print("Failed bno initialize")
+        exit(1)
+    # 外部クリスタル使用
+    bno.set_external_crystal(True)
 
 
     try:
         # ここから無限ループ
         while True:
+
+            # --------------------------- #
+            #        待機フェーズ         #
+            # --------------------------- #
+            if phase == 0:
+                #フェーズ0の処理
+                phase = 1
+
+            # --------------------------- #
+            #        落下フェーズ         #
+            # --------------------------- #
+            elif phase == 1:
+                #フェーズ1の処理
+                if(True):#ここには落下終了の条件文を入れる,今(7/16)あるコード(rakka.py)から引用するとconsecutive_count >= 5:が条件文かな
+                    #ここにニクロム線を切るコード
+                    #ニクロム線を切ったあと
+                    #遠距離フェーズ最初の5秒前進を実行
+                    motordrive.move('w', 1.0, 5.0)
+                    motordrive.stop()
+                    time.sleep(1)
+
+                    #5秒進んだ先での現在位置を得る
+                    current_lat, current_lon = gps.idokeido()
+
+                    # FutureWarningを抑制
+                    warnings.filterwarnings("ignore", category=FutureWarning)
+
+                    phase = 2
+
+
+
+
+
+
             # ************************************************** #
             #             遠距離フェーズ(phase = 2)              #
             # ************************************************** #
