@@ -9,38 +9,38 @@ from bno055 import BNO055
 from ijochi import abnormal_check
 
 try:
-    # bus = smbus.SMBus(1)
-    # bme = BME280Sensor(bus_number=1)
+    bus = smbus.SMBus(1)
+    bme = BME280Sensor(bus_number=1)
     bno = BNO055()
     if not bno.begin():
         raise RuntimeError('Failed to initialize BNO055! Is the sensor connected?')
 
-    # # 初めは異常値が出てくるので，空測定
-    # for i in range(20):
-    #     try:
-    #         bme.read_data()
-    #     except Exception as e:
-    #         print(f"An error occurred during empty measurement in BME: {e}")
+    # 初めは異常値が出てくるので，空測定
+    for i in range(20):
+        try:
+            bme.read_data()
+        except Exception as e:
+            print(f"An error occurred during empty measurement in BME: {e}")
 
     while True:
         # BME280
-        # try:
-            # temp = bme.temperature()
-            # press = bme.pressure()
-            # hum = bme.humidity()
+        try:
+            temp = bme.temperature()
+            press = bme.pressure()
+            hum = bme.humidity()
             # フィルタ前
-            # raw_make_csv.print('raw_temp', temp)
-            # raw_make_csv.print('raw_press', press)
-            # raw_make_csv.print('raw_hum', hum)
-            # # フィルタ後
-            # temp_f = abnormal_check('bme', 'temperature', temp)
-            # press_f = abnormal_check('bme', 'pressure', press)
-            # hum_f = abnormal_check('bme', 'humidity', hum)
-            # make_csv.print('temp', temp_f)
-            # make_csv.print('press', press_f)
-            # make_csv.print('hum', hum_f)
-        # except Exception as e:
-        #     print(f"BME280 error: {e}")
+            raw_make_csv.print('raw_temp', temp)
+            raw_make_csv.print('raw_press', press)
+            raw_make_csv.print('raw_hum', hum)
+            # フィルタ後
+            temp_f = abnormal_check('bme', 'temperature', temp)
+            press_f = abnormal_check('bme', 'pressure', press)
+            hum_f = abnormal_check('bme', 'humidity', hum)
+            make_csv.print('temp', temp_f)
+            make_csv.print('press', press_f)
+            make_csv.print('hum', hum_f)
+        except Exception as e:
+            print(f"BME280 error: {e}")
 
         # BNO055
         try:
