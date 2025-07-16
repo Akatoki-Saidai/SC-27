@@ -12,6 +12,7 @@ from bno055 import BNO055
 from bme280 import BME280Sensor
 import motordrive
 import gps
+import make_csv
 
 ##################################################
 #                      入力                      #
@@ -42,6 +43,8 @@ no_movement_count = 0
 
 def main():
 
+
+
     # BNO055とBME280のインスタンス生成
     bno = BNO055()
     bme = BME280Sensor(bus_number=1)
@@ -53,6 +56,8 @@ def main():
     # 外部クリスタル使用
     bno.set_external_crystal(True)
 
+    #落下フェーズの終わりから開始
+    phase = 1
 
     try:
         # ここから無限ループ
@@ -118,7 +123,7 @@ def main():
                     # ゴールへの角度に比例した時間だけ左回転
                     rotation_time = angle_to_goal / omega  # 回転時間 = 角度 / 回転速度
                     # 左に計算された時間だけ回転
-                    motordrive.move(a, 1.0, rotation_time)
+                    motordrive.move('a', 1.0, rotation_time)
 
                     motordrive.stop()
                     time.sleep(1)
@@ -128,13 +133,13 @@ def main():
                     # ゴールへの角度に比例した時間だけ右回転
                     rotation_time = abs(angle_to_goal) / omega  # 回転時間 = 角度 / 回転速度
                     # 右に計算された時間だけ回転
-                    motordrive.move(d, 1.0, rotation_time)
+                    motordrive.move('d', 1.0, rotation_time)
 
                     motordrive.stop()
                     time.sleep(1)
 
                 ###5秒前進 & スタック検知###
-                is_stacked = motordrive.move(w, 1.0, 5.0)
+                is_stacked = motordrive.move('w', 1.0, 5.0)
 
                 #スタック検知がyesの場合
                 motordrive.check_stuck(is_stacked)
@@ -151,13 +156,13 @@ def main():
                         while 0 < bno.getVector(BNO055.VECTOR_GRAVITY)[2] and time.time()-accel_start_time < 5:
                             print('muki_hantai')
                             make_csv.print('warning', 'muki_hantai')
-                            motordrive.move(w, 1.0, 0.5)
+                            motordrive.move('w', 1.0, 0.5)
                     else:
                         if time.time()-accel_start_time >= 5:
                         # 5秒以内に元の向きに戻らなかった場合
-                            motordrive.move(d, 1.0, 0.5)
+                            motordrive.move('d', 1.0, 0.5)
                             time.sleep(0.5)
-                            motordrive.move(a, 1.0, 0.5)
+                            motordrive.move('a', 1.0, 0.5)
                             time.sleep(0.5)
                             continue
                         else:
