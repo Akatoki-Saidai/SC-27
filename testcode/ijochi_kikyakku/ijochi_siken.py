@@ -44,11 +44,11 @@ try:
 
         # BNO055
         try:
-            accel = bno.read_accelerometer()
-            gyro = bno.read_gyroscope()
-            mag = bno.read_magnetometer()
-            linear_accel = bno.read_linear_acceleration()
-            gravity = bno.read_gravity()
+            accel = bno.accelerometer()
+            gyro = bno.gyroscope()
+            mag = bno.magnetometer()
+            linear_accel = bno.linear_acceleration()
+            gravity = bno.gravity()
             # フィルタ前
             raw_make_csv.print('raw_accel_all', accel)
             raw_make_csv.print('raw_gyro', gyro)
