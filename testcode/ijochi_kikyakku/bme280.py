@@ -128,7 +128,7 @@ class BME280Sensor:
         v2 = (adc_T / 131072.0 - self.digT[0] / 8192.0) * (adc_T / 131072.0 - self.digT[0] / 8192.0) * self.digT[2]
         t_fine = v1 + v2
         temperature = t_fine / 5120.0
-        #print("temp : %-6.2f ℃" % (temperature))
+        print("temp : %-6.2f ℃" % (temperature))
         return temperature
 
     def compensate_H(self, adc_H):
