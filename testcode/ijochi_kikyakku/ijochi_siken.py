@@ -3,7 +3,7 @@
 import smbus
 import time
 import make_csv
-import raw_make_csv
+import raw_make_csv  # make_csvの保存ファイル名が変わっただけ
 from bme280 import BME280Sensor
 from bno055 import BNO055
 from ijochi import abnormal_check
