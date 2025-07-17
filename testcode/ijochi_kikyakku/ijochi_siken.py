@@ -62,6 +62,7 @@ try:
             mag_f = abnormal_check('bno', 'mag', mag)
             linear_accel_f = abnormal_check('bno', 'linear_accel', linear_accel)
             gravity_f = abnormal_check('bno', 'gravity', gravity)
+            print(gravity_f)
             make_csv.print('accel_all', accel_f)
             make_csv.print('gyro', gyro_f)
             make_csv.print('mag', mag_f)
