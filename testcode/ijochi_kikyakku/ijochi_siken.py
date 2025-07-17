@@ -31,16 +31,17 @@ try:
             # フィルタ前
             raw_make_csv.print('raw_temp', temp)
             raw_make_csv.print('raw_press', press)
-            raw_make_csv.print('raw_hum', hum)
+            # raw_make_csv.print('raw_hum', hum)
             # フィルタ後
             temp_f = abnormal_check('bme', 'temperature', temp)
             press_f = abnormal_check('bme', 'pressure', press)
             hum_f = abnormal_check('bme', 'humidity', hum)
             make_csv.print('temp', temp_f)
             make_csv.print('press', press_f)
-            make_csv.print('hum', hum_f)
+            # make_csv.print('hum', hum_f)
         except Exception as e:
             print(f"BME280 error: {e}")
+            continue
 
         # BNO055
         try:
@@ -56,11 +57,11 @@ try:
             raw_make_csv.print('raw_accel_line', linear_accel)
             raw_make_csv.print('raw_grav', gravity)
             # フィルタ後
-            accel_f = abnormal_check('bno', 'accel', list(accel))
-            gyro_f = abnormal_check('bno', 'gyro', list(gyro))
-            mag_f = abnormal_check('bno', 'mag', list(mag))
-            linear_accel_f = abnormal_check('bno', 'linear_accel', list(linear_accel))
-            gravity_f = abnormal_check('bno', 'gravity', list(gravity))
+            accel_f = abnormal_check('bno', 'accel', accel)
+            gyro_f = abnormal_check('bno', 'gyro', gyro)
+            mag_f = abnormal_check('bno', 'mag', mag)
+            linear_accel_f = abnormal_check('bno', 'linear_accel', linear_accel)
+            gravity_f = abnormal_check('bno', 'gravity', gravity)
             make_csv.print('accel_all', accel_f)
             make_csv.print('gyro', gyro_f)
             make_csv.print('mag', mag_f)
