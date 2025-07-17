@@ -184,7 +184,7 @@ def move(direction, power, duration):
                 try:
                     if bno and bno.gravity():
                         gravity_z = bno.gravity()[2]
-                        if gravity_z > 0.5:
+                        if gravity_z > -0.5:
                             print('機体がひっくり返っています！姿勢補正を開始します。')
                             make_csv.print('warning', 'muki_hantai')
                             start_correction = time.time()
@@ -203,6 +203,7 @@ def move(direction, power, duration):
                                 make_csv.print('msg', 'muki_naotta')
                                 stop()
                                 start_time = time.time()
+                                #この処理の直後でまたひっくり返ると無限ループするかも
                 except Exception as e:
                     print(f"An error occurred during orientation correction: {e}")
                     make_csv.print('error', str(e))
