@@ -4,7 +4,7 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 import time
 import numpy as np
 
-from bno055 import BNO055 # BNO055を使う場合はコメント解除
+from bno055 import BNO055
 import make_csv # CSV出力を使う場合はコメント解除
 
 delta_power = 0.1 # スムーズな加速・減速のための刻み幅
@@ -26,11 +26,12 @@ motor_left = None
 # BNO055センサーの初期化
 try:
     bno = BNO055()
-    bno.setup()
+    if not bno.begin():
+        bno = None # 初期化に失敗した場合はNoneを設定
+        raise RuntimeError('Failed to initialize BNO055! Is the sensor connected?')
     print("BNO055 initialized successfully.")
 except Exception as e:
     print(f"Error initializing BNO055: {e}")
-    bno = None # 初期化に失敗した場合はNoneを設定
 
 def setup_motors():
     """
@@ -163,7 +164,7 @@ def move(direction, power, duration):
                     if not bno:
                         is_current_segment_stacking = False
                         break
-                    Gyro = bno.getVector(BNO055.VECTOR_GYROSCOPE)
+                    Gyro = bno.gyroscope()
                     if direction in ['a', 'd']:
                         if abs(Gyro[2]) > 0.75:
                             is_current_segment_stacking = False
@@ -181,13 +182,13 @@ def move(direction, power, duration):
                     is_stacked = 1
 
                 try:
-                    if bno and bno.getVector(BNO055.VECTOR_GRAVITY):
-                        gravity_z = bno.getVector(BNO055.VECTOR_GRAVITY)[2]
+                    if bno and bno.gravity():
+                        gravity_z = bno.gravity()[2]
                         if gravity_z > 0.5:
                             print('機体がひっくり返っています！姿勢補正を開始します。')
                             make_csv.print('warning', 'muki_hantai')
                             start_correction = time.time()
-                            while bno.getVector(BNO055.VECTOR_GRAVITY)[2] > 0.5 and (time.time() - start_correction) < 5:
+                            while bno.gravity()[2] > 0.5 and (time.time() - start_correction) < 5:
                                 motor_right.value = power
                                 motor_left.value = power
                                 time.sleep(0.5)
