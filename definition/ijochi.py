@@ -51,7 +51,7 @@ def abnormal_check(sensor_name, value_name, sensor_value, ERROR_FLAG=True):
             check_sensor_value = sensor_value            
 
         if abnormal_value_table[sensor_name][value_name]["min"] <= check_sensor_value <= abnormal_value_table[sensor_name][value_name]["max"]:
-            filtered_value = check_sensor_value
+            filtered_value = sensor_value
             # print("temperature is normal")
             
         else:
