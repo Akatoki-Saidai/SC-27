@@ -674,7 +674,7 @@ class BNO055(object):
             """
             heading, roll, pitch = self._read_vector(BNO055_EULER_H_LSB_ADDR)
             print(f"euler: {heading/16.0}, {roll/16.0}, {pitch/16.0}")
-            return (heading/16.0, roll/16.0, pitch/16.0)
+            return [heading/16.0, roll/16.0, pitch/16.0]
         except Exception as e:
             print(f"An error occured in bno055 reading euler: {e}")
 
@@ -685,7 +685,7 @@ class BNO055(object):
             """
             x, y, z = self._read_vector(BNO055_MAG_DATA_X_LSB_ADDR)
             print(f"mag: {x/16.0}, {y/16.0}, {z/16.0}")
-            return (x/16.0, y/16.0, z/16.0)
+            return [x/16.0, y/16.0, z/16.0]
         except Exception as e:
             print(f"An error occured in bno055 reading magnetometer: {e}")
 
@@ -696,7 +696,7 @@ class BNO055(object):
             """
             x, y, z = self._read_vector(BNO055_GYRO_DATA_X_LSB_ADDR)
             print(f"gyro: {x/900.0}, {y/900.0}, {z/900.0}")
-            return (x/900.0, y/900.0, z/900.0)
+            return [x/900.0, y/900.0, z/900.0]
         except Exception as e:
             print(f"An error occured in bno055 reading gyroscope: {e}")
 
@@ -707,7 +707,7 @@ class BNO055(object):
             """
             x, y, z = self._read_vector(BNO055_ACCEL_DATA_X_LSB_ADDR)
             print(f"accel: {x/100.0}, {y/100.0}, {z/100.0}")
-            return (x/100.0, y/100.0, z/100.0)
+            return [x/100.0, y/100.0, z/100.0]
         except Exception as e:
             print(f"An error occured in bno055 reading accelerometer: {e}")
 
@@ -718,7 +718,7 @@ class BNO055(object):
             """
             x, y, z = self._read_vector(BNO055_LINEAR_ACCEL_DATA_X_LSB_ADDR)
             print(f"liner_accel: {x/100.0}, {y/100.0}, {z/100.0}")
-            return (x/100.0, y/100.0, z/100.0)
+            return [x/100.0, y/100.0, z/100.0]
         except Exception as e:
             print(f"An error occured in bno055 reading linear acceleration: {e}")
 
@@ -729,7 +729,7 @@ class BNO055(object):
             """
             x, y, z = self._read_vector(BNO055_GRAVITY_DATA_X_LSB_ADDR)
             print(f"grav: {x/100.0}, {y/100.0}, {z/100.0}")
-            return (x/100.0, y/100.0, z/100.0)
+            return [x/100.0, y/100.0, z/100.0]
         except Exception as e:
             print(f"An error occured in bno055 reading gravity: {e}")
 
@@ -742,7 +742,7 @@ class BNO055(object):
             # Scale values, see 3.6.5.5 in the datasheet.
             scale = (1.0 / (1<<14))
             print(f"quaternion: {x*scale}, {y*scale}, {z*scale}")
-            return (x*scale, y*scale, z*scale, w*scale)
+            return [x*scale, y*scale, z*scale, w*scale]
         except Exception as e:
             print(f"An error occured in bno055 reading quaternion: {e}")
 
