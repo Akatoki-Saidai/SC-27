@@ -7,8 +7,12 @@ def main():
     # GPIOピン番号モードの設定
     # GPIO.setmode(GPIO.BCM)  # または GPIO.setmode(GPIO.BOARD)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(5, GPIO.OUT)
-    GPIO.setup(17, GPIO.OUT)
+    GPIO.setup(4, GPIO.OUT)
+    GPIO.setup(13, GPIO.OUT)
+    GPIO.setup(24, GPIO.OUT)
+    GPIO.setup(18, GPIO.OUT)
+    GPIO.setup(23, GPIO.OUT)
+    
 
 
     try:
