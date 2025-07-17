@@ -207,7 +207,7 @@ def move(direction, power, duration):
                     print(f"An error occurred during orientation correction: {e}")
                     make_csv.print('error', str(e))
 
-                time.sleep(min(0.1, (start_time + remaining_duration) - time.time()))
+                time.sleep(max(0, min(0.1, (start_time + remaining_duration) - time.time())))
 
     stop()
     return is_stacked
