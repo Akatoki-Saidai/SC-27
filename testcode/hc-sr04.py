@@ -32,14 +32,14 @@ def measure_distance():
     # エコーパルスの立ち上がりを待つ
     timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 0:
-        if pi.get_current_tick() - timeout_start > 1000000: # 1秒タイムアウト
+        if pi.get_current_tick() - timeout_start > 10000000: # 10秒タイムアウト
             return None
     pulse_start = pi.get_current_tick()
 
     # ECHOピンがLOWになるのを待つ（パルス終了）
     timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 1:
-        if pi.get_current_tick() - timeout_start > 1000000: # 1秒タイムアウト
+        if pi.get_current_tick() - timeout_start > 10000000: # 10秒タイムアウト
             return None
     pulse_end = pi.get_current_tick()
 
