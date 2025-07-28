@@ -32,19 +32,19 @@ def measure_distance():
     # エコーパルスの立ち上がりを待つ
     timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 0:
-        if pi.tickDiff(timeout_start, pi.get_current_tick()) > 1000000: # 1秒タイムアウト
+        if pi.get_current_tick() - timeout_start > 1000000: # 1秒タイムアウト
             return None
     pulse_start = pi.get_current_tick()
 
     # ECHOピンがLOWになるのを待つ（パルス終了）
     timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 1:
-        if pi.tickDiff(timeout_start, pi.get_current_tick()) > 1000000: # 1秒タイムアウト
+        if pi.get_current_tick() - timeout_start > 1000000: # 1秒タイムアウト
             return None
     pulse_end = pi.get_current_tick()
 
     # パルス幅から距離を計算
-    pulse_duration = pi.tickDiff(pulse_start, pulse_end)
+    pulse_duration = pulse_end - pulse_start
     
     # 距離(cm) = (時間(s) * 音速(cm/s)) / 2
     distance = (pulse_duration / 1000000.0) * (sound_velosity / 2)
