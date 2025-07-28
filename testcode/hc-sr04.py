@@ -51,7 +51,7 @@ if __name__ == "__main__":
         while True:
             try:
                 dist = measure_distance()
-                if dist:
+                if dist is not None:
                     print("距離: {} cm".format(dist))
                 else:
                     print("測定失敗")
