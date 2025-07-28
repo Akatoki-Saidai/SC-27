@@ -17,6 +17,10 @@ pi.set_mode(TRIG, pigpio.OUTPUT)
 pi.set_mode(ECHO, pigpio.INPUT)
 pi.write(TRIG, 0)
 
+
+
+
+
 def measure_distance():
     # トリガーを10μsだけHIGHにする
     pi.write(TRIG, 0)
@@ -26,25 +30,26 @@ def measure_distance():
     pi.write(TRIG, 0)
 
     # エコーパルスの立ち上がりを待つ
-    start_time = time.time()
+    timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 0:
-        pulse_start = time.time()
-        if pulse_start - start_time > 1:
-            return None  # タイムアウト
+        if pi.tickDiff(timeout_start, pi.get_current_tick()) > 1000000: # 1秒タイムアウト
+            return None
+    pulse_start = pi.get_current_tick()
 
-    # エコーパルスの立ち下がりを待つ
-    start_time = time.time()
+    # ECHOピンがLOWになるのを待つ（パルス終了）
+    timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 1:
-        pulse_end = time.time()
-        if pulse_end - start_time > 1:
-            return None  # タイムアウト
+        if pi.tickDiff(timeout_start, pi.get_current_tick()) > 1000000: # 1秒タイムアウト
+            return None
+    pulse_end = pi.get_current_tick()
 
-    pulse_duration = pulse_end - pulse_start
+    # パルス幅から距離を計算
+    pulse_duration = pi.tickDiff(pulse_start, pulse_end)
     
-    # 距離計算
-    distance = pulse_duration * (sound_velosity / 2)
-    distance = round(distance, 2)
-    return distance
+    # 距離(cm) = (時間(s) * 音速(cm/s)) / 2
+    distance = (pulse_duration / 1000000.0) * (sound_velosity / 2)
+    
+    return round(distance, 2)
 
 if __name__ == "__main__":
     try:
