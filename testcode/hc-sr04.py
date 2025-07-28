@@ -22,24 +22,24 @@ pi.write(TRIG, 0)
 
 
 def measure_distance():
-    # トリガーを10μsだけHIGHにする
+    # トリガーを50μsだけHIGHにする
     pi.write(TRIG, 0)
     time.sleep(0.0002)
     pi.write(TRIG, 1)
-    time.sleep(0.00001)
+    time.sleep(0.00005)
     pi.write(TRIG, 0)
 
     # エコーパルスの立ち上がりを待つ
     timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 0:
-        if pi.get_current_tick() - timeout_start > 10000000: # 10秒タイムアウト
+        if pi.get_current_tick() - timeout_start > 3000000: # 3秒タイムアウト
             return None
     pulse_start = pi.get_current_tick()
 
     # ECHOピンがLOWになるのを待つ（パルス終了）
     timeout_start = pi.get_current_tick()
     while pi.read(ECHO) == 1:
-        if pi.get_current_tick() - timeout_start > 10000000: # 10秒タイムアウト
+        if pi.get_current_tick() - timeout_start > 3000000: # 3秒タイムアウト
             return None
     pulse_end = pi.get_current_tick()
 
