@@ -3,7 +3,7 @@ import time
 
 # GPIOピンの設定
 TRIG = 6  # トリガー
-ECHO = 14  # エコー
+ECHO = 25  # エコー
 
 # 音の速度
 sound_velosity = 34370
