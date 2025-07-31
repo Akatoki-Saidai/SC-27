@@ -263,7 +263,7 @@ if __name__ == "__main__":
             move_input = input("どの動作をするか入力後、Enter\n前進：w 後退：s 右旋回：d 左旋回：a")
             move_input = str(move_input)
 
-            move(move_input, 1.0, 3)
+            move(move_input, 1.0, 5)
             time.sleep(1)
 
             print("Finish!!!!!!!!!!")
