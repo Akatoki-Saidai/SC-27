@@ -239,3 +239,43 @@ def check_stuck(is_stacked):
     except Exception as e:
         print(f"An error occurred in stack check: {e}")
         make_csv.print("error", f"An error occurred in stack check: {e}")
+
+
+if __name__ == "__main__":
+    # GPIOピン番号モードの設定
+    # GPIO.setmode(GPIO.BCM)  # または GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(4, GPIO.OUT)
+    GPIO.setup(13, GPIO.OUT)
+    GPIO.setup(24, GPIO.OUT)
+    GPIO.setup(18, GPIO.OUT)
+    GPIO.setup(23, GPIO.OUT)
+    
+
+
+    try:
+        print("--- 走行試験 ---")
+        print("--- motorをsetupする。")
+        setup_motors()
+
+        while True:
+            move_input = input("どの動作をするか入力後、Enter\n前進：w 後退：s 右旋回：d 左旋回：a")
+            move_input = str(move_input)
+
+            move(move_input, 1.0, 3)
+            time.sleep(1)
+
+            print("Finish!!!!!!!!!!")
+
+    except KeyboardInterrupt:
+        print("\nプログラムが中断されました。モーターを停止します。")
+        # setup_motors()でモーターオブジェクトが取得できている場合は、安全のため停止処理を実行
+        motor_right, motor_left = setup_motors()
+        if motor_right and motor_left:
+            stop(motor_right, motor_left)
+    finally:
+        # GPIOクリーンアップ
+        # GPIO.cleanup()
+        print("GPIO clean up")
+
+
