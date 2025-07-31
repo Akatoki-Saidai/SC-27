@@ -242,21 +242,22 @@ def check_stuck(is_stacked):
 
 
 if __name__ == "__main__":
+    
+    PIN_VM = 4
     # GPIOピン番号モードの設定
     # GPIO.setmode(GPIO.BCM)  # または GPIO.setmode(GPIO.BOARD)
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(4, GPIO.OUT)
-    GPIO.setup(13, GPIO.OUT)
-    GPIO.setup(24, GPIO.OUT)
-    GPIO.setup(18, GPIO.OUT)
-    GPIO.setup(23, GPIO.OUT)
+    GPIO.setup(PIN_VM, GPIO.OUT)
+    GPIO.setup(PIN_LEFT_BACKWARD, GPIO.OUT)
+    GPIO.setup(PIN_LEFT_FORWARD, GPIO.OUT)
+    GPIO.setup(PIN_RIGHT_FORWARD, GPIO.OUT)
+    GPIO.setup(PIN_RIGHT_FORWARD, GPIO.OUT)
     
-
-
     try:
         print("--- 走行試験 ---")
         print("--- motorをsetupする。")
         setup_motors()
+        GPIO.output(PIN_VM, 1)
 
         while True:
             move_input = input("どの動作をするか入力後、Enter\n前進：w 後退：s 右旋回：d 左旋回：a")
@@ -271,6 +272,7 @@ if __name__ == "__main__":
         print("\nプログラムが中断されました。モーターを停止します。")
         # setup_motors()でモーターオブジェクトが取得できている場合は、安全のため停止処理を実行
         motor_right, motor_left = setup_motors()
+        GPIO.output(PIN_VM, 0)
         if motor_right and motor_left:
             stop(motor_right, motor_left)
     finally:
