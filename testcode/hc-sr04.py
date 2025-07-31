@@ -23,7 +23,7 @@ def measure_distance():
     pi.write(TRIG, 0)
     time.sleep(0.0002)
     pi.write(TRIG, 1)
-    time.sleep(0.000015)
+    time.sleep(0.00001)
     pi.write(TRIG, 0)
 
     # エコーの立ち上がりを待つ
