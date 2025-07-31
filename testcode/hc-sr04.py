@@ -19,16 +19,16 @@ pi.write(TRIG, 0)
 
 
 def measure_distance():
+    timeout_us = (1 * 10^6)
+    pulse_start = None
+    pulse_end = None
+
     # トリガーを15μsだけHIGHにする
     pi.write(TRIG, 0)
     time.sleep(0.0002)
     pi.write(TRIG, 1)
     time.sleep(0.00001)
     pi.write(TRIG, 0)
-
-    timeout_us = (1 * 10^6)
-    pulse_start = None
-    pulse_end = None
     
     # エコーパルスの立ち上がりを待つ
     start_time = pi.get_current_tick()
