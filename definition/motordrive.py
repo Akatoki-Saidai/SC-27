@@ -25,7 +25,7 @@ motor_left = None
 
 # BNO055センサーの初期化
 try:
-    bno = BNO055()
+    # bno = BNO055()
     if not bno.begin():
         bno = None # 初期化に失敗した場合はNoneを設定
         raise RuntimeError('Failed to initialize BNO055! Is the sensor connected?')
