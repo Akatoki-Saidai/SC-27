@@ -26,23 +26,27 @@ def measure_distance():
     time.sleep(0.00001)
     pi.write(TRIG, 0)
 
-    # エコーの立ち上がりを待つ
     timeout_sec = 1.0
-    if not pi.wait_for_edge(ECHO, pigpio.RISING_EDGE, timeout_sec):
-        return None # タイムアウト
-    pulse_start = pi.get_current_tick()
+    
+    # エコーパルスの立ち上がりを待つ
+    start_time = time.time()
+    while pi.read(ECHO) == 0:
+        pulse_start = pi.get_current_tick()
+        if pulse_start - start_time > timeout_sec:
+            return None  # タイムアウト
 
-    # ECHOンの立ち下がりを待つ
-    if not pi.wait_for_edge(ECHO, pigpio.FALLING_EDGE, timeout_sec):
-        return None # タイムアウト
-    pulse_end = pi.get_current_tick()
-
+    # エコーパルスの立ち下がりを待つ
+    start_time = time.time()
+    while pi.read(ECHO) == 1:
+        pulse_end = pi.get_current_tick()
+        if pulse_end - start_time > timeout_sec:
+            return None  # タイムアウト
+        
     # パルス幅から距離を計算
     pulse_duration = pigpio.tickDiff(pulse_start, pulse_end)
     
     # 距離(cm) = (時間(s) * 音速(cm/s)) / 2
     distance = ((pulse_duration / 1000000.0) * sound_velosity) / 2
-    
     return round(distance, 2)
 
 if __name__ == "__main__":
