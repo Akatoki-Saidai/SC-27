@@ -23,12 +23,23 @@ def measure_distance():
     pulse_start = None
     pulse_end = None
 
-    # トリガーを15μsだけHIGHにする
+    # トリガーを10μsだけHIGHにする
+    start_time = pi.get_current_tick()
     pi.write(TRIG, 0)
-    time.sleep(0.0002)
+    write_time = pi.get_current_tick()
+    while write_time - start_time > 200:
+        write_time = pi.get_current_tick()
+        print(f"TRIS status: {pi.read(TRIG)}")
+    
+    start_time = pi.get_current_tick()
     pi.write(TRIG, 1)
-    time.sleep(0.00001)
+    write_time = pi.get_current_tick()
+    while write_time - start_time > 10:
+        write_time = pi.get_current_tick()
+        print(f"TRIS status: {pi.read(TRIG)}")
+        
     pi.write(TRIG, 0)
+    time.sleep(0.0001)
     
     # エコーパルスの立ち上がりを待つ
     start_time = pi.get_current_tick()
