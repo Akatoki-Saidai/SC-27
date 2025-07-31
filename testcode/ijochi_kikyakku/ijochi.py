@@ -3,7 +3,7 @@
 # 異常値範囲テーブル(合計値) 
 abnormal_value_table = {
     "bme": {
-        "temperature": {"min": 0, "max": 60},
+        "temperature": {"min": 0, "max": 40},
         "humidity": {"min": 0, "max": 100},
         "pressure": {"min": 800, "max": 1100},
     },
