@@ -28,6 +28,7 @@ def measure_distance():
 
     timeout_us = (1 * 10^6)
     pulse_start = None
+    pulse_end = None
     
     # エコーパルスの立ち上がりを待つ
     start_time = pi.get_current_tick()
