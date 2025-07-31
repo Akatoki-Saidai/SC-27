@@ -39,14 +39,6 @@ def measure_distance():
         print(f"TRIS status: {pi.read(TRIG)}")
         
     pi.write(TRIG, 0)
-    
-    # エコーパルスの立ち上がりを待つ
-    start_time = pi.get_current_tick()
-    while pi.read(ECHO) == 0:
-        pulse_start = pi.get_current_tick()
-        if pulse_start - start_time > timeout_us:
-            print("タイムアウト: pulse_start")
-            return None  # タイムアウト
 
     # エコーパルスの立ち下がりを待つ
     start_time = pi.get_current_tick()
@@ -57,10 +49,10 @@ def measure_distance():
             return None  # タイムアウト
         
     # パルス幅から距離を計算
-    if (pulse_start is None) or (pulse_end is None):
-        print("pulse_start is None or pulse_end is None")
+    if pulse_end is None:
+        print("pulse_end is None")
         return None
-    pulse_duration = pulse_end - pulse_start
+    pulse_duration = pulse_end - start_time
     
     # 距離(cm) = (時間(s) * 音速(cm/s)) / 2
     distance = ((pulse_duration / 1000000.0) * sound_velosity) / 2
