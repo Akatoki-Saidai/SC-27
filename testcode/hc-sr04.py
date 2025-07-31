@@ -26,7 +26,7 @@ def measure_distance():
     time.sleep(0.00001)
     pi.write(TRIG, 0)
 
-    timeout_us = (1.0 * 10^6)
+    timeout_us = (1 * 10^6)
     
     # エコーパルスの立ち上がりを待つ
     start_time = pi.get_current_tick()
