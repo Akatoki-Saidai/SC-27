@@ -39,7 +39,6 @@ def measure_distance():
         print(f"TRIS status: {pi.read(TRIG)}")
         
     pi.write(TRIG, 0)
-    time.sleep(0.0001)
     
     # エコーパルスの立ち上がりを待つ
     start_time = pi.get_current_tick()
