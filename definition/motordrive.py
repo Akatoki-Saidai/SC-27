@@ -257,7 +257,7 @@ if __name__ == "__main__":
         print("--- 走行試験 ---")
         print("--- motorをsetupする。")
         setup_motors()
-        GPIO.output(PIN_VM, 1)
+        GPIO.output(PIN_VM,0)
 
         while True:
             move_input = input("どの動作をするか入力後、Enter\n前進：w 後退：s 右旋回：d 左旋回：a")
