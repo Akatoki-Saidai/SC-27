@@ -19,7 +19,7 @@ pi.write(TRIG, 0)
 
 
 def measure_distance():
-    timeout_us = (1 * 10^6)
+    timeout_us = (1 * 1000000)
     pulse_start = None
     pulse_end = None
 
@@ -35,6 +35,7 @@ def measure_distance():
     while pi.read(ECHO) == 0:
         pulse_start = pi.get_current_tick()
         if pulse_start - start_time > timeout_us:
+            print("タイムアウト: pulse_start")
             return None  # タイムアウト
 
     # エコーパルスの立ち下がりを待つ
@@ -42,10 +43,12 @@ def measure_distance():
     while pi.read(ECHO) == 1:
         pulse_end = pi.get_current_tick()
         if pulse_end - start_time > timeout_us:
+            print("タイムアウト: pulse_end")
             return None  # タイムアウト
         
     # パルス幅から距離を計算
     if (pulse_start is None) or (pulse_end is None):
+        print("pulse_start is None or pulse_end is None")
         return None
     pulse_duration = pulse_end - pulse_start
     
