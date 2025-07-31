@@ -30,13 +30,15 @@ def measure_distance():
     while write_time - start_time > 200:
         write_time = pi.get_current_tick()
         print(f"TRIS status: {pi.read(TRIG)}")
-    
+        return None
+ 
     start_time = pi.get_current_tick()
     pi.write(TRIG, 1)
     write_time = pi.get_current_tick()
     while write_time - start_time > 10:
         write_time = pi.get_current_tick()
         print(f"TRIS status: {pi.read(TRIG)}")
+        return None
         
     pi.write(TRIG, 0)
     time.sleep(0.0001)
