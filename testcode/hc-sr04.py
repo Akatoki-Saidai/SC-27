@@ -26,20 +26,20 @@ def measure_distance():
     time.sleep(0.00001)
     pi.write(TRIG, 0)
 
-    timeout_sec = 1.0
+    timeout_us = (1.0 * 10^6)
     
     # エコーパルスの立ち上がりを待つ
-    start_time = time.time()
+    start_time = pi.get_current_tick()
     while pi.read(ECHO) == 0:
         pulse_start = pi.get_current_tick()
-        if pulse_start - start_time > timeout_sec:
+        if pulse_start - start_time > timeout_us:
             return None  # タイムアウト
 
     # エコーパルスの立ち下がりを待つ
-    start_time = time.time()
+    start_time = pi.get_current_tick()
     while pi.read(ECHO) == 1:
         pulse_end = pi.get_current_tick()
-        if pulse_end - start_time > timeout_sec:
+        if pulse_end - start_time > timeout_us:
             return None  # タイムアウト
         
     # パルス幅から距離を計算
