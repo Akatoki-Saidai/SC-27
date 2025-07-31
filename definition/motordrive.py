@@ -12,12 +12,12 @@ delta_power = 0.1 # スムーズな加速・減速のための刻み幅
 # DCモータのピン設定
 # 回路図に基づいたピン割り当て
 # Motor Driver 2 (U4) for Right Motor
-PIN_RIGHT_FORWARD = 23 # 回路図のU4, IN2 (GPIO23)
-PIN_RIGHT_BACKWARD = 18 # 回路図のU4, IN1 (GPIO18)
+PIN_RIGHT_FORWARD = 18 # 回路図のU4, IN2 (GPIO23)
+PIN_RIGHT_BACKWARD = 23 # 回路図のU4, IN1 (GPIO18)
 
 # Motor Driver 1 (U5) for Left Motor
-PIN_LEFT_FORWARD = 24 # 回路図のU5, IN2 (GPIO24)
-PIN_LEFT_BACKWARD = 13 # 回路図のU5, IN1 (GPIO13)
+PIN_LEFT_FORWARD = 13 # 回路図のU5, IN2 (GPIO24)
+PIN_LEFT_BACKWARD = 24 # 回路図のU5, IN1 (GPIO13)
 
 # グローバル変数としてモーター保持
 motor_right = None
