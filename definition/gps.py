@@ -8,6 +8,18 @@ import math
 port = "/dev/serial0"
 baudrate = 9600
 
+# WGS84楕円体のパラメータを定義
+a = 6378137.0
+b = 6356752.314245
+f = (a - b) / a
+
+# 緯度経度をWGS84楕円体に基づいて設定
+goal_lat, goal_lon = 40.14389563045866, 139.98732883121738 # 能代宇宙広場 (ゴール地点の例)
+
+# pyprojを使ってWGS84楕円体に基づく投影を定義
+wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')
+
+
 def idokeido():
     """
     緯度と経度を抽出します
@@ -33,7 +45,7 @@ def idokeido():
         print(f"Serial error: {e}")
         return None, None
 
-def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon):
+def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon):
     # 現在地の緯度経度をメートルに変換
     current_x, current_y = pyproj.transform(wgs84, pyproj.Proj('+proj=utm +zone=54 +ellps=WGS84'), current_lon, current_lat)
 
