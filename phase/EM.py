@@ -102,7 +102,7 @@ def main():
                 try:
                     temperature = bme.temperature()
                     pressure = bme.pressure()
-                    humidity = bme.humidity()
+                    # humidity = bme.humidity()
                     time.sleep(1.0)
                     alt_1 = bme.altitude(pressure, qnh=baseline)
                     print(f"alt_1: {alt_1}")
