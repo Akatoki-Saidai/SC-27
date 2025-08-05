@@ -45,7 +45,6 @@ def main():
     # BNO055初期化
     if not bno.begin():
         print("Failed bno initialize")
-        exit(1)
     # 外部クリスタル使用
     bno.set_external_crystal(True)
 
