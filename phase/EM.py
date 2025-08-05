@@ -1,4 +1,3 @@
-import smbus
 import serial
 import time
 import math
