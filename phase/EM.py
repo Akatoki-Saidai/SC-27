@@ -85,7 +85,6 @@ def main():
 
     #落下フェーズの終わりから開始
     phase = 0
-    ready = False
 
     try:
         print("セットアップ完了")
