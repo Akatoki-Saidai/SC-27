@@ -45,8 +45,6 @@ def main():
     # BNO055初期化
     if not bno.begin():
         print("Failed bno initialize")
-    # 外部クリスタル使用
-    bno.set_external_crystal(True)
 
     # 温湿度気圧センサセットアップ
     try:
