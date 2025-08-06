@@ -200,7 +200,7 @@ def judge_cone(frame):
 if __name__ == '__main__':
     try:
         picam2 = Picamera2()
-        config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (640, 480)})
+        config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1024, 768)})
         picam2.configure(config)  # カメラの初期設定
         
         picam2.start()
