@@ -343,7 +343,7 @@ def main():
                 try:
                     if cam_flag == False:
                         picam2 = Picamera2()
-                        config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1024, 768)})
+                        config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1280, 720)})
                         picam2.configure(config)  # カメラの初期設定
                         picam2.start()
                         cam_flag = True
