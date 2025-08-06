@@ -211,7 +211,7 @@ if __name__ == '__main__':
             frame = cv2.rotate(frame, cv2.ROTATE_180)
 
             # 判断(この中に全て入っております)
-            frame, colorcone_x_persent, camera_order = judge_cone(frame)
+            frame, colorcone_x_persent, camera_order, red_area = judge_cone(frame)
 
             # 結果表示
             cv2.imshow('kekka', frame)
