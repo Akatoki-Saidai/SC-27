@@ -145,7 +145,7 @@ def judge_cone(frame):
                 print("The red object is too minimum")
                 camera_order = 0
 
-        elif red_area > 0.02:
+        elif red_persent > 0.02:
             print("judge red object by yolo")
 
             try:
@@ -181,7 +181,7 @@ def judge_cone(frame):
             cv2.putText(frame, str(yolo_xylist[4]), (int(yolo_xylist[0]), int(yolo_xylist[1] - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0))
 
             # 面積表示
-            cv2.putText(frame, str(red_area), (int(yolo_xylist[0]), int(yolo_xylist[3] - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255))
+            cv2.putText(frame, f"{red_persent} %", (int(yolo_xylist[0]), int(yolo_xylist[3] - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255))
 
             # red_result = cv2.drawContours(mask, [biggest_contour], -1, (0, 255, 0), 2)
         
@@ -190,7 +190,7 @@ def judge_cone(frame):
             cv2.rectangle(frame, (red_rect[0], red_rect[1]), (red_rect[0] + red_rect[2], red_rect[1] + red_rect[3]), (0, 0, 255), 2)
 
             # 最大の領域の面積を表示する
-            cv2.putText(frame, str(red_area), (red_rect[0], red_rect[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 1)
+            cv2.putText(frame, f"{red_persent} %", (red_rect[0], red_rect[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 1)
 
         return frame, colorcone_x_persent, camera_order, red_area
     
