@@ -152,13 +152,13 @@ def main():
                     # 機体がひっくり返ってたら回る
                 try:
                     accel_start_time = time.time()
-                    if 0 < bno.getVector(BNO055.VECTOR_GRAVITY)[2]:
-                        while 0 < bno.getVector(BNO055.VECTOR_GRAVITY)[2] and time.time()-accel_start_time < 5:
+                    if 0 < bno.gravity()[2]:
+                        while 0 < bno.gravity()[2] and time.time() - accel_start_time < 5:
                             print('muki_hantai')
                             make_csv.print('warning', 'muki_hantai')
                             motordrive.move('w', 1.0, 0.5)
                     else:
-                        if time.time()-accel_start_time >= 5:
+                        if time.time() - accel_start_time >= 5:
                         # 5秒以内に元の向きに戻らなかった場合
                             motordrive.move('d', 1.0, 0.5)
                             time.sleep(0.5)

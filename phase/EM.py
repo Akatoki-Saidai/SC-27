@@ -21,11 +21,20 @@ import hcsr04 as ultrasonic
 # --------------------------- #
 #             入力            #
 # --------------------------- #
-# モータを起動させたときの機体の回転速度ω[rad/s]
-omega = math.pi / 2  # rad/s
+
+# ゴールの位置を入力(能代宇宙広場)
+goal_lat = 40.14389563045866
+goal_lon = 139.98732883121738
+make_csv.print("goal_lat", goal_lat)
+make_csv.print("goal_lon", goal_lon)
 
 # 初期位置の緯度経度を取得
 start_lat, start_lon = gps.idokeido()
+make_csv.print("lat", start_lat)
+make_csv.print("lon", start_lon)
+
+# モータを起動させたときの機体の回転速度ω[rad/s]
+omega = math.pi / 2  # rad/s
 
 # 移動していない判定のカウンター
 no_movement_count = 0
@@ -104,6 +113,11 @@ def main():
                     print(f"alt_1: {alt_1}")
                     time.sleep(0.5)
 
+                    # センサーデータを記録
+                    make_csv.print("temp", temperature)
+                    make_csv.print("press", pressure)
+                    make_csv.print("alt", alt_1)
+
                     if  alt_1 >= 10:
                         phase = 1
                         print("Go to falling phase")
@@ -111,6 +125,7 @@ def main():
                         make_csv.print("phase", 1)
                     else:
                         print("落下を検知できませんでした")
+                        make_csv.print("msg", "落下を検知できませんでした")
 
                     time.sleep(1)
 
@@ -131,9 +146,20 @@ def main():
                         alt_2 = bme.altitude(pressure, qnh=baseline)
 
                         linear_accel = bno.linear_acceleration()
-                        accel_x, accel_y, accel_z = linear_accel
+                        accel_x, accel_y, accel_z = linear_accel[0], linear_accel[1], linear_accel[2]
 
                         print(f"accel_x: {accel_x}, accel_y: {accel_y}, accel_z: {accel_z}")
+
+                        # センサーデータを記録
+                        make_csv.print("press", pressure)
+                        make_csv.print("alt", alt_2)
+                        make_csv.print("accel_line_x", accel_x)
+                        make_csv.print("accel_line_y", accel_y)
+                        make_csv.print("accel_line_z", accel_z)
+
+                        # 判断に用いた測定データを記録
+                        accel_sum = abs(accel_x) + abs(accel_y) + abs(accel_z)
+                        make_csv.print("msg", f"落下判定: accel_sum={accel_sum:.3f} < 0.1, alt={alt_2:.3f} <= 0.1")
 
                         if abs(accel_x) + abs(accel_y) + abs(accel_z) < 0.1 and alt_2 <= 0.1:
                             consecutive_count += 1
@@ -143,6 +169,7 @@ def main():
                         else:
                             consecutive_count = 0
                             print(f"落下終了の条件を満たしませんでした")
+                            make_csv.print("msg", f"落下終了の条件を満たしませんでした")
                             time.sleep(0.5)
 
                         if consecutive_count >= 5:
@@ -150,13 +177,13 @@ def main():
                             print("ニクロム線切断開始")
 
                             #ニクロム線切断
-                            pin = 16
+                            nichrome_pin = 16
                             '''
                             GPIO.setmode(GPIO.BCM)
-                            GPIO.setup(pin, GPIO.OUT)
-                            GPIO.output(pin, 1)
+                            GPIO.setup(nichrome_pin, GPIO.OUT)
+                            GPIO.output(nichrome_pin, 1)
                             time.sleep(5)
-                            GPIO.output(pin, 0)
+                            GPIO.output(nichrome_pin, 0)
                             '''
                             make_csv.print("msg","ニクロム線切断完了")
                             print("ニクロム線切断完了")
@@ -165,16 +192,21 @@ def main():
                             #ニクロム線を切ったあと
                             #遠距離フェーズ最初の5秒前進を実行
                             motordrive.move('w', 1.0, 5.0)
+                            make_csv.print("motor_l", 1.0)  # 左モーター
+                            make_csv.print("motor_r", 1.0)  # 右モーター
                             motordrive.stop()
                             time.sleep(1)
 
                             #5秒進んだ先での現在位置を得る
                             current_lat, current_lon = gps.idokeido()
+                            make_csv.print("lat", current_lat)
+                            make_csv.print("lon", current_lon)
 
                             # FutureWarningを抑制
                             warnings.filterwarnings("ignore", category=FutureWarning)
 
                             phase = 2
+                            make_csv.print("phase", 2)
 
                 except Exception as e:
                     print(f"An error occurred in phase 1: {e}")
@@ -185,99 +217,135 @@ def main():
             #        遠距離フェーズ       #
             # --------------------------- #
             elif phase == 2:
-                print(current_lat, current_lon)  # 現在位置
+                try:
+                    print(current_lat, current_lon)  # 現在位置
 
-                # 距離と角度を計算し、表示
-                distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon)
-                print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
-                print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
+                    # 距離と角度を計算し、表示
+                    distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon)
+                    print("現在地からゴール地点までの距離: ", distance_to_goal, "m")
 
-                # 移動していない判定
-                if distance_to_goal == 2323232323:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
-                    no_movement_count += 1
-                    print("移動していない判定:", no_movement_count, "回")
-                    if no_movement_count >= 23:
-                        print("移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
-                        phase = 3  # 近距離フェーズに移行
-                else:
-                    no_movement_count = 0  # 移動が検出されたらカウンターをリセット
+                    # GPSデータとゴール相対位置を記録
+                    make_csv.print("lat", current_lat)
+                    make_csv.print("lon", current_lon)
+                    make_csv.print("goal_distance", distance_to_goal)
+                    make_csv.print("goal_relative_angle_rad", angle_to_goal)
 
-                    # 進行方向を決定
-                    if angle_to_goal > 0:
-                        print("進行方向に対して左方向にゴールがあります")
-                        # ゴールへの角度に比例した時間だけ左回転
-                        rotation_time = angle_to_goal / omega  # 回転時間 = 角度 / 回転速度
-                        # 左に計算された時間だけ回転
-                        motordrive.move('a', 1.0, rotation_time)
-
-                        motordrive.stop()
-                        time.sleep(1)
-
+                    # 移動していない判定
+                    if distance_to_goal == 2323232323:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
+                        no_movement_count += 1
+                        print("移動していない判定: ", no_movement_count, "回")
+                        make_csv.print("msg", f"移動していない判定: {no_movement_count}回")
+                        if no_movement_count >= 23:
+                            print("移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
+                            make_csv.print("msg", "移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
+                            phase = 3  # 近距離フェーズに移行
+                            make_csv.print("phase", 3)
                     else:
-                        print("進行方向に対して右方向にゴールがあります")
-                        # ゴールへの角度に比例した時間だけ右回転
-                        rotation_time = abs(angle_to_goal) / omega  # 回転時間 = 角度 / 回転速度
-                        # 右に計算された時間だけ回転
-                        motordrive.move('d', 1.0, rotation_time)
+                        no_movement_count = 0  # 移動が検出されたらカウンターをリセット
 
+                        # 進行方向を決定
+                        if angle_to_goal > 0:
+                            print("進行方向に対して左方向にゴールがあります")
+                            # ゴールへの角度に比例した時間だけ左回転
+                            rotation_time = angle_to_goal / omega  # 回転時間 = 角度 / 回転速度
+                            # 左に計算された時間だけ回転
+                            motordrive.move('a', 1.0, rotation_time)
+                            make_csv.print("motor_r", 1.0)
+                            make_csv.print("motor_l", -1.0)
+
+                            motordrive.stop()
+                            make_csv.print("motor_r", 0)
+                            make_csv.print("motor_l", 0)
+
+                            time.sleep(1)
+
+                        else:
+                            print("進行方向に対して右方向にゴールがあります")
+                            # ゴールへの角度に比例した時間だけ右回転
+                            rotation_time = abs(angle_to_goal) / omega  # 回転時間 = 角度 / 回転速度
+                            # 右に計算された時間だけ回転
+                            motordrive.move('d', 1.0, rotation_time)
+                            make_csv.print("motor_r", -1.0)
+                            make_csv.print("motor_l", 1.0)
+
+                            motordrive.stop()
+                            make_csv.print("motor_r", 0)
+                            make_csv.print("motor_l", 0)
+                            time.sleep(1)
+
+                        ###5秒前進 & スタック検知###
+                        is_stacked = motordrive.move('w', 1.0, 5.0)
+                        make_csv.print("motor_l", 1.0)  # 左モーター
+                        make_csv.print("motor_r", 1.0)  # 右モーター
+
+                        #スタック検知がyesの場合
+                        motordrive.check_stuck(is_stacked)
+                        #スタックしたときの処理が行われる
+                        
+                        #モーター止める
                         motordrive.stop()
                         time.sleep(1)
 
-                    ###5秒前進 & スタック検知###
-                    is_stacked = motordrive.move('w', 1.0, 5.0)
-
-                    #スタック検知がyesの場合
-                    motordrive.check_stuck(is_stacked)
-                    #スタックしたときの処理が行われる
-                    
-                    #モーター止める
-                    motordrive.stop()
-                    time.sleep(1)
-
-                        # 機体がひっくり返ってたら回る
-                    try:
-                        accel_start_time = time.time()
-                        if 0 < bno.gravity()[2]:
-                            while 0 < bno.gravity()[2] and time.time()-accel_start_time < 5:
-                                print('muki_hantai')
-                                make_csv.print('warning', 'muki_hantai')
-                                motordrive.move('w', 1.0, 0.5)
-                        else:
-                            if time.time()-accel_start_time >= 5:
-                            # 5秒以内に元の向きに戻らなかった場合
-                                motordrive.move('d', 1.0, 0.5)
-                                time.sleep(0.5)
-                                motordrive.move('a', 1.0, 0.5)
-                                time.sleep(0.5)
-                                continue
+                            # 機体がひっくり返ってたら回る
+                        try:
+                            accel_start_time = time.time()
+                            gravity_data = bno.gravity()
+                            grav_x, grav_y, grav_z = gravity_data[0], gravity_data[1], gravity_data[2]
+                            make_csv.print("grav_x", grav_x)
+                            make_csv.print("grav_y", grav_y)
+                            make_csv.print("grav_z", grav_z)
+                            
+                            if 0 < bno.gravity()[2]:
+                                while 0 < bno.gravity()[2] and time.time()-accel_start_time < 5:
+                                    print('muki_hantai')
+                                    make_csv.print('warning', 'muki_hantai')
+                                    motordrive.move('w', 1.0, 0.5)
+                                    make_csv.print("motor_r", 1.0)
+                                    make_csv.print("motor_l", 1.0)
                             else:
-                                print('muki_naotta')
-                                make_csv.print('msg', 'muki_naotta')
-                                motordrive.stop()
-                    except Exception as e:
-                        print(f"An error occured while changing the orientation: {e}")
-                        make_csv.print('error', f"An error occured while changing the orientation: {e}")
+                                if time.time()-accel_start_time >= 5:
+                                # 5秒以内に元の向きに戻らなかった場合
+                                    motordrive.move('d', 1.0, 0.5)
+                                    make_csv.print("motor_r", -1.0)
+                                    make_csv.print("motor_l", 1.0)
+                                    time.sleep(0.5)
+                                    motordrive.move('a', 1.0, 0.5)
+                                    make_csv.print("motor_r", 1.0)
+                                    make_csv.print("motor_l", -1.0)
+                                    time.sleep(0.5)
+                                    continue
+                                else:
+                                    print('muki_naotta')
+                                    make_csv.print('msg', 'muki_naotta')
+                                    motordrive.stop()
+                        except Exception as e:
+                            print(f"An error occured while changing the orientation: {e}")
+                            make_csv.print('error', f"An error occured while changing the orientation: {e}")
 
-                # 現在地を更新
-                current_lat, current_lon = gps.idokeido()
+                    # 現在地を更新
+                    current_lat, current_lon = gps.idokeido()
 
-                # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
-                if distance_to_goal <= 10:
-                    print("近距離フェーズに移行")
-                    phase = 3
-
+                    # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
+                    if distance_to_goal <= 10:
+                        print("近距離フェーズに移行")
+                        make_csv.print("phase", 3)
+                        phase = 3
+                except Exception as e:
+                    print(f"An error occured in phase 2: {e}")
+                    make_csv.print('error', f"An error occured in phase 2: {e}")
 
             # --------------------------- #
             #        近距離フェーズ       #
             # --------------------------- #
             elif phase == 3:
                 try:
-                    if cam_frag == False:
+                    if cam_flag == False:
                         picam2 = Picamera2()
                         config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1024, 768)})
                         picam2.configure(config)  # カメラの初期設定
                         picam2.start()
-                        cam_frag = True
+                        cam_flag = True
+                        make_csv.print("msg", "カメラ初期化完了")
 
                     # フレームを取得
                     frame = picam2.capture_array()
@@ -285,15 +353,25 @@ def main():
 
                     try:
                         relative_cone_x = 0
-                        frame, relative_cone_x, camera_order = cam.judge_cone(frame)
+                        frame, relative_cone_x, camera_order, red_area = cam.judge_cone(frame)
+                        print(f"relative_cone_x: {relative_cone_x}")
+                        print(f"camera_order: {camera_order}")
+                        
+                        # カメラデータを記録
+                        make_csv.print("camera_order", camera_order)
+                        make_csv.print("goal_relative_x", relative_cone_x)
+                        make_csv.print("camera_area", red_area)
+                        
                     except Exception as e:
                         print(f"An error occured in judging relative_cone : {e}")
+                        make_csv.print("error", f"An error occured in judging relative_cone : {e}")
 
                     # 結果表示
                     cv2.imshow('kekka', frame)
                     if cv2.waitKey(25) & 0xFF == ord('q'):
                         cv2.destroyAllWindows()
                         print('q interrupted direction by camera')
+                        make_csv.print("msg", 'q interrupted direction by camera')
                         continue
 
                     # 結果に応じてモーターを駆動
@@ -303,6 +381,8 @@ def main():
                     if camera_order == 0:
                         # コーンが見つからなかったとき
                         motordrive.move('d', 1.0, 0.2)
+                        make_csv.print("motor_r", -1.0)
+                        make_csv.print("motor_l", 1.0)
                         # あとでmotordriveを確認する
                         # motordrive.stop()
                         time.sleep(0.8)
@@ -310,16 +390,22 @@ def main():
                     elif camera_order == 1:
                         # コーンが正面にあったとき
                         motordrive.move('w', 1.0, 0.5)
+                        make_csv.print("motor_r", 1.0)
+                        make_csv.print("motor_l", 1.0)
                         time.sleep(0.5)
 
                     elif camera_order == 2:
                         # コーンが右にあったとき
                         motordrive.move('d', 1.0, rotation_time)
+                        make_csv.print("motor_r", -1.0)
+                        make_csv.print("motor_l", 1.0)
                         time.sleep(0.5)
 
                     elif camera_order == 3:
                         # コーンが左にあったとき
                         motordrive.move('a', 1.0, rotation_time)
+                        make_csv.print("motor_r", 1.0)
+                        make_csv.print("motor_l", -1.0)
                         time.sleep(0.5)
 
                     elif camera_order == 4:
@@ -327,13 +413,20 @@ def main():
                         # あとでここに距離センサのコードを用意する
                         goal_distance = ultrasonic.distance()
                         print(f"goal_distance: {goal_distance} cm")
+                        make_csv.print("goal_distance", goal_distance)
+                        
                         if goal_distance < 60:
                             motordrive.move('w', 0.8, 0.1)
+                            make_csv.print("motor_r", 0.8)
+                            make_csv.print("motor_l", 0.8)
                             phase = 4
+                            make_csv.print("phase", 4)
                             print("ended short phase")
+                            make_csv.print("msg", "ended short phase")
                 
                 except Exception as e:
-                    print(f"An error occured in short phase: {e}")
+                    print(f"An error occured in phase 3: {e}")
+                    make_csv.print('error', f"An error occured in phase 3: {e}")
 
 
             # --------------------------- #
@@ -343,12 +436,15 @@ def main():
                 try:
                     pass
                     print("goal goal goal")
+                    make_csv.print("msg", "goal goal goal")
                 
                 except Exception as e:
-                    print(f"An error occured in goal phase: {e}")
+                    print(f"An error occured in phase 4: {e}")
+                    make_csv.print('error', f"An error occured in phase 4: {e}")
             
     except Exception as e:
-        print(f"遠距離フェーズでエラーが発生: {e}")
+        print(f"メインループでエラーが発生: {e}")
+        make_csv.print('serious_error', f"An error occured in main loop: {e}")
 
 if __name__ == "__main__":
     main()

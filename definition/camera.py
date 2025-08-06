@@ -189,7 +189,7 @@ def judge_cone(frame):
             # 最大の領域の面積を表示する
             cv2.putText(frame, str(red_area), (red_rect[0], red_rect[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 1)
 
-        return frame, colorcone_x_persent, camera_order
+        return frame, colorcone_x_persent, camera_order, red_area
     
     except Exception as e:
         print(f"An error occured in judging colorcone: {e}")
