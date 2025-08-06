@@ -72,6 +72,7 @@ def analyze_red(mask):
     area = 0
     center_x = 0
     center_y = 0
+    rect = (0, 0, 0, 0)
     
     # 画像の中にある領域を検出する
     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -103,6 +104,7 @@ def judge_cone(frame):
         yolo_xylist = None
         camera_order = 0
         frame_center_x = frame.shape[1] // 2
+        red_persent = 0.0
 
         try:
             # 赤色検出
