@@ -125,7 +125,7 @@ def judge_cone(frame):
             print("Close to red, check distance of ultrasonic")
             camera_order = 4
 
-        elif red_persent > 0.35:
+        elif red_persent > 0.4:
             print("judge red object by color")
 
             # 画像幅に対してどのくらい離れているか計算
