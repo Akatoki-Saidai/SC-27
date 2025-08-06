@@ -323,6 +323,8 @@ def main():
                             make_csv.print('error', f"An error occured while changing the orientation: {e}")
 
                     # 現在地を更新
+                    start_lat = current_lat
+                    start_lon = current_lon
                     current_lat, current_lon = gps.idokeido()
 
                     # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
