@@ -118,6 +118,7 @@ def judge_cone(frame):
         except Exception as e:
             print(f"An error occured in analize_red: {e}")
 
+
         colorcone_x_persent = 0
         # 中心座標のx座標が画像の中心より大きいか小さいか判定→超音波へ
         if red_persent > 0.6:
@@ -128,23 +129,22 @@ def judge_cone(frame):
             print("judge red object by color")
 
             # 画像幅に対してどのくらい離れているか計算
-            colorcone_x_persent = (red_center_x - frame_center_x) / (frame.shape[0] * frame.shape[1])
+            colorcone_x_persent = (red_center_x - frame_center_x) / frame.shape[1]
+            print(f"relative_red_x: {colorcone_x_persent}")
 
-            if -50 <= colorcone_x_persent <= 50:
-                print("The red object is in the center")#直進
+            if -0.05 <= colorcone_x_persent <= 0.055:
+                print("The red object is in the center")  #直進
                 camera_order = 1
-            elif colorcone_x_persent > 50:
-                print("The red object is in the right")#右へ
+            elif colorcone_x_persent > 0.05:
+                print("The red object is in the right")  #右へ
                 camera_order = 2
-            elif colorcone_x_persent < -50:
-                print("The red object is in the left")#左へ
+            elif colorcone_x_persent < -0.05:
+                print("The red object is in the left")  #左へ
                 camera_order = 3
             else:
                 print("The red object is too minimum")
                 camera_order = 0
 
-
-            
         elif red_area > 0.02:
             print("judge red object by yolo")
 
@@ -157,15 +157,16 @@ def judge_cone(frame):
 
             # 画像幅に対してどのくらい離れているか計算
             colorcone_x_persent = (red_center_x - frame_center_x) / (frame.shape[0] * frame.shape[1])
+            print(f"relative_red_x: {colorcone_x_persent}")
             
-            if -50 <= colorcone_x_persent <= 50:
-                print("The yolo object is in the center")#直進
+            if -0.05 <= colorcone_x_persent <= 0.05:
+                print("The yolo object is in the center")  #直進
                 camera_order = 1
-            elif colorcone_x_persent > 50:
-                print("The yolo object is in the right")#右へ
+            elif colorcone_x_persent > 0.05:
+                print("The yolo object is in the right")  #右へ
                 camera_order = 2
-            elif colorcone_x_persent < -50:
-                print("The yolo object is in the left")#左へ
+            elif colorcone_x_persent < -0.05:
+                print("The yolo object is in the left")  #左へ
                 camera_order = 3
             else:
                 print("The yolo object is too minimum")
@@ -200,7 +201,7 @@ def judge_cone(frame):
 if __name__ == '__main__':
     try:
         picam2 = Picamera2()
-        config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1024, 768)})
+        config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1280, 720)})
         picam2.configure(config)  # カメラの初期設定
         
         picam2.start()
@@ -209,6 +210,10 @@ if __name__ == '__main__':
             # フレームを取得
             frame = picam2.capture_array()
             frame = cv2.rotate(frame, cv2.ROTATE_180)
+
+            # RGBに変換
+            if frame.shape[2] == 4:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)  # BGRA → BGR（RGBと等価）
 
             # 判断(この中に全て入っております)
             frame, colorcone_x_persent, camera_order, red_area = judge_cone(frame)
