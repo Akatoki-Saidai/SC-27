@@ -7,7 +7,7 @@ import numpy as np
 from picamera2 import Picamera2 
 
 # 同じディレクトリに重みを置く
-pt_path = "./SC-27_yolo_ver1.pt"
+pt_path = "./my_custom_model.pt"
 
 
 def yolo_detect(frame):
