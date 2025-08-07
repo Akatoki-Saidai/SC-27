@@ -17,7 +17,9 @@ f = (a - b) / a
 goal_lat, goal_lon = 40.14389563045866, 139.98732883121738 # 能代宇宙広場 (ゴール地点の例)
 
 # pyprojを使ってWGS84楕円体に基づく投影を定義
-wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')
+wgs84 = pyproj.CRS('EPSG:4326')
+utm = pyproj.CRS('+proj=utm +zone=54 +ellps=WGS84')
+transformer = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True)
 
 
 def idokeido():
@@ -47,13 +49,13 @@ def idokeido():
 
 def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon):
     # 現在地の緯度経度をメートルに変換
-    current_x, current_y = pyproj.transform(wgs84, pyproj.Proj('+proj=utm +zone=54 +ellps=WGS84'), current_lon, current_lat)
+    current_x, current_y = transformer.transform(current_lon, current_lat)
 
     # 前回の現在地（スタート地点）の緯度経度をメートルに変換
-    start_x, start_y = pyproj.transform(wgs84, pyproj.Proj('+proj=utm +zone=54 +ellps=WGS84'), start_lon, start_lat)
+    start_x, start_y = transformer.transform(start_lon, start_lat)
 
     # ゴール地点の緯度経度をメートルに変換
-    goal_x, goal_y = pyproj.transform(wgs84, pyproj.Proj('+proj=utm +zone=54 +ellps=WGS84'), goal_lon, goal_lat)
+    goal_x, goal_y = transformer.transform(goal_lon, goal_lat)
 
     # スタート地点から現在地までの距離を計算する
     distance_start_current = math.sqrt((current_x - start_x)**2 + (current_y - start_y)**2)
@@ -66,7 +68,7 @@ def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon,
 
     # ゴールへの方向を計算 (ラジアン)
     try:
-        theta_for_goal = math.pi - math.acos((distance_start_current ** 2 + distance_start_goal ** 2 - distance_current_goal ** 2) / (2 * distance_current_loc * distance_loc_goal))
+        theta_for_goal = math.pi - math.acos((distance_start_current ** 2 + distance_start_goal ** 2 - distance_current_goal ** 2) / (2 * distance_start_current * distance_current_goal))
         return distance_start_goal, theta_for_goal
     except:
         print("移動していません")  # 例外処理: ゼロ除算が発生した場合の処理
