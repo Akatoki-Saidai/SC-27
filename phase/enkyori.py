@@ -26,9 +26,9 @@ f = (a - b) / a
 ##################################################
 #                      入力                      #
 ##################################################
-# 能代宇宙広場 (ゴール地点の例)
+# 埼玉大学第一食堂 (ゴール地点の例)
 # 緯度経度をWGS84楕円体に基づいて設定
-goal_lat, goal_lon = 40.14389563045866, 139.98732883121738 # 緯度，経度
+goal_lat, goal_lon = 35.8620326, 139.6069273
 
 # pyprojを使ってWGS84楕円体に基づく投影を定義
 wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')
@@ -98,7 +98,7 @@ def main():
                 print(current_lat, current_lon)  # 現在位置
 
             # 距離と角度を計算し、表示
-            distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon)
+            distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon)
             print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
             print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
 
