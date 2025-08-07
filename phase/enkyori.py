@@ -7,7 +7,7 @@ import pyproj
 
 # センサ類import
 from bno055 import BNO055
-from bme280 import BME280Sensor
+# from bme280 import BME280Sensor
 import motordrive
 import gps
 import make_csv
@@ -43,7 +43,7 @@ def main():
 
     # BNO055とBME280のインスタンス生成
     bno = BNO055()
-    bme = BME280Sensor(bus_number=1)
+    # bme = BME280Sensor(bus_number=1)
 
     # BNO055初期化
     if not bno.begin():
