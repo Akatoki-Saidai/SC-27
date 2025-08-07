@@ -1,5 +1,3 @@
-import smbus
-
 # 諸関係のやつimport
 import serial
 import time
@@ -43,8 +41,6 @@ no_movement_count = 0
 
 def main():
 
-
-
     # BNO055とBME280のインスタンス生成
     bno = BNO055()
     bme = BME280Sensor(bus_number=1)
@@ -57,7 +53,7 @@ def main():
     bno.set_external_crystal(True)
 
     #落下フェーズの終わりから開始
-    phase = 1
+    phase = 0
 
     try:
         # ここから無限ループ
@@ -186,3 +182,6 @@ def main():
             
     except Exception as e:
         print(f"遠距離フェーズでエラーが発生: {e}")
+
+if __name__ == "__main__":
+    main()
