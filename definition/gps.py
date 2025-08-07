@@ -22,6 +22,18 @@ utm = pyproj.CRS('+proj=utm +zone=54 +ellps=WGS84')
 transformer = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True)
 
 
+def zenbu():
+    try:
+        with serial.Serial(port, baudrate, timeout=1) as ser:
+            start_time = time.time()
+            while (time.time() - start_time) < 15:  # 15秒間試行
+                line = ser.readline().decode('ascii', errors='replace')
+                print(f"line: {line}")
+            return None
+    except serial.SerialException as e:
+        print(f"Serial error: {e}")
+        return None
+
 def idokeido():
     """
     緯度と経度を抽出します

@@ -21,3 +21,6 @@ if __name__ == '__main__':
             print("曜日の抽出に失敗しました。")
     else:
         print("日本時間の取得に失敗しました。")
+    print("全てのデータを表示")
+    while True:
+        gps.zenbu()
