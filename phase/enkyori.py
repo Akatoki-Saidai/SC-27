@@ -38,6 +38,10 @@ no_movement_count = 0
 
 def main():
 
+    # 緯度経度初期化
+    start_lat, start_lon = None, None
+    current_lat, current_lon = None, None
+    
     # BNO055とBME280のインスタンス生成
     bno = BNO055()
     # bme = BME280Sensor(bus_number=1)
@@ -48,6 +52,7 @@ def main():
         # exit(1)
     # 外部クリスタル使用
     bno.set_external_crystal(True)
+   
 
     #落下フェーズの終わりから開始
     phase = 0

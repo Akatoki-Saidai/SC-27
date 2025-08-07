@@ -41,6 +41,10 @@ pt_path = "./SC-27_yolo_ver1.pt"
 cam_flag = False
 
 def main():
+    
+    # 緯度経度初期化
+    start_lat, start_lon = None, None
+    current_lat, current_lon = None, None
 
     # BNO055とBME280のインスタンス生成
     bno = BNO055()
