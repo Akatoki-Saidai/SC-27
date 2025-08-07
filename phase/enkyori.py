@@ -185,4 +185,7 @@ def main():
 
 if __name__ == "__main__":
     while True:
-        main()
+        try:
+            main()
+        except Exception as e:
+            print(f"Unexpected error occured: {e}")
