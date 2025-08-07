@@ -55,10 +55,9 @@ def main():
     #落下フェーズの終わりから開始
     phase = 0
 
-    try:
-        # ここから無限ループ
-        while True:
-
+    # ここから無限ループ
+    while True:
+        try:
             # --------------------------- #
             #        待機フェーズ         #
             # --------------------------- #
@@ -179,13 +178,10 @@ def main():
                 print("近距離フェーズに移行")
                 phase = 3
                 break
-            
-    except Exception as e:
-        print(f"遠距離フェーズでエラーが発生: {e}")
+        
+        except Exception as e:
+            print(f"遠距離フェーズでエラーが発生: {e}")
 
 if __name__ == "__main__":
     while True:
-        try:
-            main()
-        except Exception as e:
-            print(f"Unexpected error occured: {e}")
+        main()
