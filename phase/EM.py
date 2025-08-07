@@ -28,11 +28,6 @@ goal_lon = 139.98732883121738
 make_csv.print("goal_lat", goal_lat)
 make_csv.print("goal_lon", goal_lon)
 
-# 初期位置の緯度経度を取得
-start_lat, start_lon = gps.idokeido()
-make_csv.print("lat", start_lat)
-make_csv.print("lon", start_lon)
-
 # モータを起動させたときの機体の回転速度ω[rad/s]
 omega = math.pi / 2  # rad/s
 
@@ -190,6 +185,16 @@ def main():
                             
                             #ここにニクロム線を切るコード
                             #ニクロム線を切ったあと
+
+                            # 初期位置の緯度経度を取得
+                            start_lat, start_lon = gps.idokeido()
+                            while start_lat is None or start_lon is None:
+                                print("cannot get start_lat, start_lon. retry")
+                                start_lat, start_lon = gps.idokeido()
+                                time.sleep(0.5)
+                            make_csv.print("lat", start_lat)
+                            make_csv.print("lon", start_lon)
+
                             #遠距離フェーズ最初の5秒前進を実行
                             motordrive.move('w', 1.0, 5.0)
                             make_csv.print("motor_l", 1.0)  # 左モーター
@@ -199,6 +204,10 @@ def main():
 
                             #5秒進んだ先での現在位置を得る
                             current_lat, current_lon = gps.idokeido()
+                            while current_lat is None or current_lon is None:
+                                print("cannot get current_lat, current_lon. retry")
+                                start_lat, start_lon = gps.idokeido()
+                                time.sleep(0.5)
                             make_csv.print("lat", current_lat)
                             make_csv.print("lon", current_lon)
 
@@ -326,6 +335,12 @@ def main():
                     start_lat = current_lat
                     start_lon = current_lon
                     current_lat, current_lon = gps.idokeido()
+                    while current_lat is None or current_lon is None:
+                        print("cannot get current_lat, current_lon. retry")
+                        start_lat, start_lon = gps.idokeido()
+                        time.sleep(0.5)
+                    make_csv.print("lat", current_lat)
+                    make_csv.print("lon", current_lon)
 
                     # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
                     if distance_to_goal <= 10:

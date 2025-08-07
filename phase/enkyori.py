@@ -33,9 +33,6 @@ goal_lat, goal_lon = 35.8620326, 139.6069273
 # pyprojを使ってWGS84楕円体に基づく投影を定義
 wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')
 
-# 初期位置の緯度経度を取得
-start_lat, start_lon = gps.idokeido()
-
 # 移動していない判定のカウンター
 no_movement_count = 0
 
@@ -73,6 +70,14 @@ def main():
                 if(True):#ここには落下終了の条件文を入れる,今(7/16)あるコード(rakka.py)から引用するとconsecutive_count >= 5:が条件文かな
                     #ここにニクロム線を切るコード
                     #ニクロム線を切ったあと
+                    
+                    # 初期位置の緯度経度を取得
+                    start_lat, start_lon = gps.idokeido()
+                    while start_lat is None or start_lon is None:
+                        print("cannot get start_lat, start_lon. retry")
+                        start_lat, start_lon = gps.idokeido()
+                        time.sleep(0.5)
+
                     #遠距離フェーズ最初の5秒前進を実行
                     motordrive.move('w', 1.0, 5.0)
                     motordrive.stop()
@@ -80,14 +85,15 @@ def main():
 
                     #5秒進んだ先での現在位置を得る
                     current_lat, current_lon = gps.idokeido()
+                    while current_lat is None or current_lon is None:
+                        print("cannot get current_lat, current_lon. retry")
+                        start_lat, start_lon = gps.idokeido()
+                        time.sleep(0.5)
 
                     # FutureWarningを抑制
                     warnings.filterwarnings("ignore", category=FutureWarning)
 
                     phase = 2
-
-
-
 
 
 
@@ -170,8 +176,14 @@ def main():
 
 
             # 現在地を更新
-            current_lat = gps.get_latitude()
-            current_lon = gps.get_longitude()
+            start_lat = current_lat
+            start_lon = current_lon
+            current_lat, current_lon = gps.idokeido()
+            while current_lat is None or current_lon is None:
+                print("cannot get current_lat, current_lon. retry")
+                start_lat, start_lon = gps.idokeido()
+                time.sleep(0.5)
+
 
             # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
             if distance_to_goal <= 10:
