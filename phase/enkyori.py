@@ -92,7 +92,7 @@ def main():
                     current_lat, current_lon = gps.idokeido()
                     while current_lat is None or current_lon is None:
                         print("cannot get current_lat, current_lon. retry")
-                        start_lat, start_lon = gps.idokeido()
+                        current_lat, current_lon = gps.idokeido()
                         time.sleep(0.5)
 
                     # FutureWarningを抑制
