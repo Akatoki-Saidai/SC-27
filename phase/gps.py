@@ -66,7 +66,7 @@ def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon,
 
     # ゴールへの方向を計算 (ラジアン)
     try:
-        theta_for_goal = math.pi - math.acos((distance_start_current ** 2 + distance_start_goal ** 2 - distance_current_goal ** 2) / (2 * distance_current_loc * distance_loc_goal))
+        theta_for_goal = math.pi - math.acos((distance_start_current ** 2 + distance_start_goal ** 2 - distance_current_goal ** 2) / (2 * distance_start_current * distance_current_goal))
         return distance_start_goal, theta_for_goal
     except:
         print("移動していません")  # 例外処理: ゼロ除算が発生した場合の処理
