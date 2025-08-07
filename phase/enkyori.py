@@ -184,4 +184,5 @@ def main():
         print(f"遠距離フェーズでエラーが発生: {e}")
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
