@@ -32,6 +32,7 @@ while True:
         print(f"Pressure: {pressure} hPa")
         print(f"Baseline Pressure: {baseline} hPa")
         print(f"Altitude: {altitude} m")
+        time.sleep(0.2)
     
     except Exception as e:
         print(f"An error occurred in running bme object: {e}")
