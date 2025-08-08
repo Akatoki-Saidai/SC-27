@@ -21,8 +21,8 @@ def main():
         print("--- motorをsetupする。")
         motordrive.setup_motors()
 
-        print("前進 (w): 強さ1.0で、5秒間動かす")
-        motordrive.move('w', 1.0, 5)
+        print("前進 (w): 強さ1.0で、3秒間動かす")
+        motordrive.move('w', 1.0, 3)
         time.sleep(1)
 
         print("後退 (s): 強さ1.0で、1.5秒間動かす")
