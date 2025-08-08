@@ -16,6 +16,7 @@ import gps
 import make_csv
 import camera as cam
 import hcsr04 as ultrasonic
+import ijochi  # 異常値棄却関数: abnormal_check(sensor_name, value_name, sensor_value, ERROR_FLAG=True)
 
 
 # --------------------------- #
@@ -106,9 +107,13 @@ def main():
                 try:
                     temperature = bme.temperature()
                     pressure = bme.pressure()
+                    temperature = ijochi.abnormal_check("bme", "temperature", temperature, ERROR_FLAG=False)
+                    pressure = ijochi.abnormal_check("bme", "pressure", pressure, ERROR_FLAG=True)
+                                        
                     # humidity = bme.humidity()
                     time.sleep(1.0)
                     alt_1 = bme.altitude(pressure, qnh=baseline)
+
                     print(f"alt_1: {alt_1}")
                     time.sleep(0.5)
 
@@ -141,12 +146,15 @@ def main():
                     consecutive_count = 0
 
                     for _ in range(10):
+                        temperature = bme.temperature()
                         pressure = bme.pressure()
+                        temperature = ijochi.abnormal_check("bme", "temperature", temperature, ERROR_FLAG=False)
+                        pressure = ijochi.abnormal_check("bme", "pressure", pressure, ERROR_FLAG=True)
                         alt_2 = bme.altitude(pressure, qnh=baseline)
 
                         linear_accel = bno.linear_acceleration()
+                        linear_accel = ijochi.abnormal_check("bno", "linear_accel", linear_accel, ERROR_FLAG=True)
                         accel_x, accel_y, accel_z = linear_accel[0], linear_accel[1], linear_accel[2]
-
                         print(f"accel_x: {accel_x}, accel_y: {accel_y}, accel_z: {accel_z}")
 
                         # センサーデータを記録
@@ -192,9 +200,13 @@ def main():
 
                             # 初期位置の緯度経度を取得
                             start_lat, start_lon = gps.idokeido()
+                            start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
+                            start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
                             while start_lat is None or start_lon is None:
                                 print("cannot get start_lat, start_lon. retry")
                                 start_lat, start_lon = gps.idokeido()
+                                start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
+                                start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
                                 time.sleep(0.5)
                             make_csv.print("lat", start_lat)
                             make_csv.print("lon", start_lon)
@@ -208,9 +220,13 @@ def main():
 
                             #5秒進んだ先での現在位置を得る
                             current_lat, current_lon = gps.idokeido()
+                            current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
+                            current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                             while current_lat is None or current_lon is None:
                                 print("cannot get current_lat, current_lon. retry")
                                 current_lat, current_lon = gps.idokeido()
+                                current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
+                                current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                                 time.sleep(0.5)
                             make_csv.print("lat", current_lat)
                             make_csv.print("lon", current_lon)
@@ -303,6 +319,7 @@ def main():
                         try:
                             accel_start_time = time.time()
                             gravity_data = bno.gravity()
+                            gravity_data = ijochi.abnormal_check("bno", "gravity", gravity_data, ERROR_FLAG=True)
                             grav_x, grav_y, grav_z = gravity_data[0], gravity_data[1], gravity_data[2]
                             make_csv.print("grav_x", grav_x)
                             make_csv.print("grav_y", grav_y)
@@ -342,6 +359,8 @@ def main():
                     while current_lat is None or current_lon is None:
                         print("cannot get current_lat, current_lon. retry")
                         start_lat, start_lon = gps.idokeido()
+                        current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
+                        current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                         time.sleep(0.5)
                     make_csv.print("lat", current_lat)
                     make_csv.print("lon", current_lon)
