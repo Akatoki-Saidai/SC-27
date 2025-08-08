@@ -119,7 +119,7 @@ class BME280Sensor:
         v2 = ((pressure / 4.0) * self.digP[7]) / 8192.0
         pressure = pressure + ((v1 + v2 + self.digP[6]) / 16.0)
 
-        print("pressure : %7.2f hPa" % (pressure / 100))
+        # print("pressure : %7.2f hPa" % (pressure / 100))
         return pressure / 100
 
     def compensate_T(self, adc_T):
