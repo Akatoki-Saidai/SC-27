@@ -164,7 +164,7 @@ class BME280Sensor:
         #p0 = self.baseline(pressure)  # 海面更生気圧 (Pa)
         altitude = (((1 - (pow((pressure / qnh), 0.190284))) * 145366.45) / 0.3048) / 10  #p0
         #altitude = ((pow((qnh / pressure), (1.0 / 5.257)) - 1) * (temperature + 273.15)) / 0.0065
-        print("altitude : %6.2f" % (altitude))
+        # print("altitude : %6.2f" % (altitude))
         data = [altitude,pressure]
         return altitude
 
@@ -175,7 +175,7 @@ class BME280Sensor:
         for i in range(baseline_size):
             pressure = self.pressure()
             baseline_values.append(pressure)
-            time.sleep(0.1)
+            time.sleep(0.01)
         baseline = sum(baseline_values[:-25]) / len(baseline_values[:-25])
 
         return baseline
