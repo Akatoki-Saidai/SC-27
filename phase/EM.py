@@ -72,14 +72,14 @@ def main():
     except Exception as e:
         print(f"An error occurred in setting bme object: {e}")
         make_csv.print('serious_error', f"An error occurred in setting bme280 object: {e}")
-        return
+        # return
 
     # 9軸センサセットアップ
     try:
         if not bno.begin():
             print("Error initializing device")
             make_csv.print("serious_error", "Error initializing device")
-            return
+            # return
         time.sleep(1)
         bno.set_external_crystal(True)
         make_csv.print("msg", "all clear(bno055)")
@@ -87,7 +87,7 @@ def main():
     except Exception as e:
         print(f"An error occurred in setting bno055: {e}")
         make_csv.print("serious_error", f"An error occurred in setting bno055: {e}")
-        return
+        # return
 
     #落下フェーズの終わりから開始
     phase = 0
