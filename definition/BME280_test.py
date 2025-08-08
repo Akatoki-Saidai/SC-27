@@ -5,17 +5,22 @@ import time
 from bme280 import BME280Sensor
 
 try:
-    while True:
-        bus = smbus.SMBus(1)
-        bme = BME280Sensor(bus_number=1)
+    
+    bus = smbus.SMBus(1)
+    bme = BME280Sensor(bus_number=1)
 
-        # 初めは異常値が出てくるので，空測定
-        for i in range(20):
-            try:
-                bme.read_data()
-            except Exception as e:
-                print(f"An error occurred during empty measurement in BME: {e}")
+    # 初めは異常値が出てくるので，空測定
+    for i in range(20):
+        try:
+            bme.read_data()
+        except Exception as e:
+            print(f"An error occurred during empty measurement in BME: {e}")
 
+except Exception as e:
+    print(f"An error occurred in setting bme object: {e}")
+
+while True:
+    try:
         temperature = bme.temperature()
         pressure = bme.pressure()
         # humidity = bme.humidity()
@@ -27,9 +32,10 @@ try:
         print(f"Pressure: {pressure} hPa")
         print(f"Baseline Pressure: {baseline} hPa")
         print(f"Altitude: {altitude} m")
+    
+    except Exception as e:
+        print(f"An error occurred in running bme object: {e}")
 
-except Exception as e:
-    print(f"An error occurred in setting bme object: {e}")
 
 
 
