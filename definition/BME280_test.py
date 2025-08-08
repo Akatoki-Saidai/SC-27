@@ -15,6 +15,8 @@ try:
             bme.read_data()
         except Exception as e:
             print(f"An error occurred during empty measurement in BME: {e}")
+    
+    baseline = bme.baseline()
 
 except Exception as e:
     print(f"An error occurred in setting bme object: {e}")
@@ -25,14 +27,13 @@ while True:
         pressure = bme.pressure()
         # humidity = bme.humidity()
         # make_csv.print("alt_base_press", pressure)
-        baseline = bme.baseline()
         altitude = bme.altitude(pressure, qnh=baseline)
 
         print(f"Temperature: {temperature} °C")
         print(f"Pressure: {pressure} hPa")
-        print(f"Baseline Pressure: {baseline} hPa")
+        # print(f"Baseline Pressure: {baseline} hPa")
         print(f"Altitude: {altitude} m")
-        time.sleep(0.2)
+        # time.sleep(0.2)
     
     except Exception as e:
         print(f"An error occurred in running bme object: {e}")
