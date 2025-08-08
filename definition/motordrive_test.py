@@ -37,12 +37,12 @@ def main():
         motordrive.move('q', 1.0, 2)
         time.sleep(1)
 
-        print("左旋回 (a): 強さ0.9で、1.5秒間動かす")
-        motordrive.move('a', 0.9, 1.5)
+        print("左旋回 (a): 強さ1.0で、1.5秒間動かす")
+        motordrive.move('a', 1.0, 1.5)
         time.sleep(1)
 
-        print("右旋回 (d): 強さ0.9で、1.5秒間動かす")
-        motordrive.move('d', 0.9, 1.5)
+        print("右旋回 (d): 強さ1.0で、1.5秒間動かす")
+        motordrive.move('d', 1.0, 1.5)
         time.sleep(1)
 
         print("check_stuck()が動くかどうかをテスト")
