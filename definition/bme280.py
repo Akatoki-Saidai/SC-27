@@ -175,6 +175,7 @@ class BME280Sensor:
         for i in range(baseline_size):
             pressure = self.pressure()
             baseline_values.append(pressure)
+            print("pressure : %7.2f hPa" % (pressure / 100))
             time.sleep(0.01)
         baseline = sum(baseline_values[:-25]) / len(baseline_values[:-25])
 
