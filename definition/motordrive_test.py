@@ -25,6 +25,7 @@ def main():
         motordrive.move('w', 1.0, 3)
         time.sleep(1)
 
+        """
         print("後退 (s): 強さ1.0で、1.5秒間動かす")
         motordrive.move('s', 1.0, 1.5)
         time.sleep(1)
@@ -48,6 +49,7 @@ def main():
         print("check_stuck()が動くかどうかをテスト")
         motordrive.check_stuck(1)
         time.sleep(1)
+        """
 
         # 本当は以下のように使う
         # is_stucked = motordrive.move(w, 1.0, 5.0) # スタックしたら返り値で1を返す
