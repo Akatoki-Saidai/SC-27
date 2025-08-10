@@ -225,6 +225,7 @@ def check_stuck(is_stacked):
     """
     try:
         if is_stacked == 1:
+            GPIO.setup(PIN_LED, GPIO.OUT)
             GPIO.output(PIN_LED, 1)
             for _ in range(2):
                 time.sleep(0.5)
@@ -236,15 +237,20 @@ def check_stuck(is_stacked):
             make_csv.print("warning", "Stacking detected!")
 
             move('s', 1.0, 3)
+            time.sleep(0.5)
             move('d', 1.0, 1)
+            time.sleep(0.5)
             move('w', 1.0, 2)
+            time.sleep(0.5)
             stop()
-
+            
+            GPIO.setup(PIN_LED, GPIO.OUT)
             GPIO.output(PIN_LED, 0)
             time.sleep(1)
     except Exception as e:
         print(f"An error occurred in stack check: {e}")
         make_csv.print("error", f"An error occurred in stack check: {e}")
+
 
 
 if __name__ == "__main__":
