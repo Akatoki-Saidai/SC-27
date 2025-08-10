@@ -191,12 +191,7 @@ def move(direction, power, duration):
                             make_csv.print('warning', 'muki_hantai')
                             start_correction = time.time()
                             while bno.gravity()[2] > 0.5 and (time.time() - start_correction) < 5:
-                                motor_right.value = power
-                                motor_left.value = power
-                                time.sleep(0.5)
-                                motor_right.value = 0.0
-                                motor_left.value = 0.0
-                                time.sleep(0.1)
+                                move("w", 1.0, 2.0) # 前進2.0秒
                             if time.time() - start_correction >= 5:
                                 print('補正失敗')
                                 make_csv.print('warning', 'orientation_correction_failed')
