@@ -170,12 +170,12 @@ def move(direction, power, duration):
                     Gyro = bno.gyroscope()
                     make_csv.print('gyro', Gyro)
                     if direction in ['a', 'd']:
-                        if abs(Gyro[2]) > 0.75:
+                        if abs(Gyro[2]) > 0.4:
                             is_current_segment_stacking = False
                             break
                     else:
                         gyro_mag = np.linalg.norm(Gyro)
-                        if gyro_mag > 0.75:
+                        if gyro_mag > 0.4:
                             is_current_segment_stacking = False
                             break
                     time.sleep(0.2)
@@ -195,12 +195,8 @@ def move(direction, power, duration):
                             make_csv.print('warning', 'muki_hantai')
                             start_correction = time.time()
                             while bno.gravity()[2] > 0.5 and (time.time() - start_correction) < 5:
-                                motor_right.value = power
-                                motor_left.value = power
+                                move("w", 1.0, 2.0) # 前進2.0秒
                                 time.sleep(0.5)
-                                motor_right.value = 0.0
-                                motor_left.value = 0.0
-                                time.sleep(0.1)
                             if time.time() - start_correction >= 5:
                                 print('補正失敗')
                                 make_csv.print('warning', 'orientation_correction_failed')

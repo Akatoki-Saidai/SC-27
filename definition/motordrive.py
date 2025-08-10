@@ -168,12 +168,12 @@ def move(direction, power, duration):
                         break
                     Gyro = bno.gyroscope()
                     if direction in ['a', 'd']:
-                        if abs(Gyro[2]) > 0.75:
+                        if abs(Gyro[2]) > 0.4:
                             is_current_segment_stacking = False
                             break
                     else:
                         gyro_mag = np.linalg.norm(Gyro)
-                        if gyro_mag > 0.75:
+                        if gyro_mag > 0.4:
                             is_current_segment_stacking = False
                             break
                     time.sleep(0.2)
