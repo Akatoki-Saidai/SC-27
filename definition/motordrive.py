@@ -219,6 +219,7 @@ def check_stuck(is_stacked):
     """
     try:
         if is_stacked == 1:
+            GPIO.setup(5,GPIO.OUT)
             GPIO.output(5, 1)
             for _ in range(2):
                 time.sleep(0.5)
