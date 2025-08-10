@@ -7,7 +7,7 @@ import numpy as np
 
 import camera as cam
 import motordrive
-import bno
+import bno055
 import hcsr04 as ultrasonic
 
 
