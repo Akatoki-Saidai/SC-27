@@ -235,7 +235,7 @@ def check_stuck(is_stacked):
             move('w', 1.0, 2)
             stop()
 
-            GPIO.output(17, 0)
+            GPIO.output(5, 0)
             time.sleep(1)
     except Exception as e:
         print(f"An error occurred in stack check: {e}")
