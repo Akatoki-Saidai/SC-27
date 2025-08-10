@@ -19,6 +19,9 @@ PIN_RIGHT_BACKWARD = 23 # 回路図のU4, IN1 (GPIO18)
 PIN_LEFT_FORWARD = 13 # 回路図のU5, IN2 (GPIO24)
 PIN_LEFT_BACKWARD = 24 # 回路図のU5, IN1 (GPIO13)
 
+# LEDのピン設定
+PIN_LED = 5
+
 # グローバル変数としてモーター保持
 motor_right = None
 motor_left = None
@@ -219,12 +222,12 @@ def check_stuck(is_stacked):
     """
     try:
         if is_stacked == 1:
-            GPIO.output(5, 1)
+            GPIO.output(PIN_LED, 1)
             for _ in range(2):
                 time.sleep(0.5)
-                GPIO.output(5, 0)
+                GPIO.output(PIN_LED, 0)
                 time.sleep(0.5)
-                GPIO.output(5, 1)
+                GPIO.output(PIN_LED, 1)
 
             print("Stacking detected!")
             make_csv.print("warning", "Stacking detected!")
@@ -234,7 +237,7 @@ def check_stuck(is_stacked):
             move('w', 1.0, 2)
             stop()
 
-            GPIO.output(17, 0)
+            GPIO.output(PIN_LED, 0)
             time.sleep(1)
     except Exception as e:
         print(f"An error occurred in stack check: {e}")
