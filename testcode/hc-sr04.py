@@ -5,8 +5,8 @@ import time
 TRIG = 6  # トリガー
 ECHO = 25  # エコー
 
-# 音の速度
-sound_velosity = 34370
+# 音の速度[cm]
+sound_velosity = 33150 + 60 * 25  # 25℃の場合
 
 pi = pigpio.pi()
 if not pi.connected:
@@ -19,41 +19,32 @@ pi.write(TRIG, 0)
 
 def distance():
     timeout_us = (1 * 1000000)
+    start_time = None
     pulse_start = None
     pulse_end = None
 
     # トリガーを10μsだけHIGHにする
-    start_time = pi.get_current_tick()
     pi.write(TRIG, 0)
-    write_time = pi.get_current_tick()
-    while write_time - start_time <= 200:
-        write_time = pi.get_current_tick()
-        print(f"TRIG status: {pi.read(TRIG)}")
- 
-    start_time = pi.get_current_tick()
-    pi.write(TRIG, 1)
-    write_time = pi.get_current_tick()
-    while write_time - start_time <= 10:
-        write_time = pi.get_current_tick()
-        print(f"TRIG status: {pi.read(TRIG)}")
-        
+    time.sleep(0.1)
+    pi.gpio_trigger(TRIG, 10, 1)
+    
     pi.write(TRIG, 0)
 
     # エコーパルスの立ち上がりを待つ
+    start_time = pi.get_current_tick()
     pulse_start = pi.get_current_tick()
-    pulse_end = pi.get_current_tick()
     while pi.read(ECHO) == 0:
-        pulse_end = pi.get_current_tick()
-        if pulse_end - pulse_start > timeout_us:
+        pulse_start = pi.get_current_tick()
+        if pulse_start - start_time > timeout_us:
             print("タイムアウト: pulse_end")
             return None  # タイムアウト
         
     # エコーパルスの立ち下がりを待つ
-    pulse_start = pi.get_current_tick()
+    start_time = pi.get_current_tick()
     pulse_end = pi.get_current_tick()
     while pi.read(ECHO) == 1:
         pulse_end = pi.get_current_tick()
-        if pulse_end - pulse_start > timeout_us:
+        if pulse_end - start_time > timeout_us:
             print("タイムアウト: pulse_end")
             return None  # タイムアウト
         
