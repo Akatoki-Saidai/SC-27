@@ -7,6 +7,8 @@ import numpy as np
 from bno055 import BNO055
 import make_csv # CSV出力を使う場合はコメント解除
 
+import ijochi
+
 delta_power = 0.1 # スムーズな加速・減速のための刻み幅
 
 # DCモータのピン設定
@@ -19,7 +21,6 @@ PIN_RIGHT_BACKWARD = 23 # 回路図のU4, IN1 (GPIO18)
 PIN_LEFT_FORWARD = 13 # 回路図のU5, IN2 (GPIO24)
 PIN_LEFT_BACKWARD = 24 # 回路図のU5, IN1 (GPIO13)
 
-# LEDのピン設定
 PIN_LED = 5
 
 # グローバル変数としてモーター保持
@@ -167,14 +168,14 @@ def move(direction, power, duration):
                     if not bno:
                         is_current_segment_stacking = False
                         break
-                    Gyro = bno.gyroscope()
+                    Gyro = ijochi.abnormal_check("bno", "gyro", bno.gyroscope(), ERROR_FLAG=True)
                     if direction in ['a', 'd']:
-                        if abs(Gyro[2]) > 0.75:
+                        if abs(Gyro[2]) > 0.4:
                             is_current_segment_stacking = False
                             break
                     else:
                         gyro_mag = np.linalg.norm(Gyro)
-                        if gyro_mag > 0.75:
+                        if gyro_mag > 0.4:
                             is_current_segment_stacking = False
                             break
                     time.sleep(0.2)
@@ -186,18 +187,14 @@ def move(direction, power, duration):
 
                 try:
                     if bno and bno.gravity():
-                        gravity_z = bno.gravity()[2]
+                        gravity_z = ijochi.abnormal_check("bno", "gravity", bno.gravity(), ERROR_FLAG=True)[2]
                         if gravity_z < 0.5:
                             print('機体がひっくり返っています！姿勢補正を開始します。')
                             make_csv.print('warning', 'muki_hantai')
                             start_correction = time.time()
-                            while bno.gravity()[2] > 0.5 and (time.time() - start_correction) < 5:
-                                motor_right.value = power
-                                motor_left.value = power
+                            while bno.gravity()[2] < 0.5 and (time.time() - start_correction) < 5:
+                                move("w", 1.0, 2.0) # 前進2.0秒
                                 time.sleep(0.5)
-                                motor_right.value = 0.0
-                                motor_left.value = 0.0
-                                time.sleep(0.1)
                             if time.time() - start_correction >= 5:
                                 print('補正失敗')
                                 make_csv.print('warning', 'orientation_correction_failed')
@@ -222,6 +219,7 @@ def check_stuck(is_stacked):
     """
     try:
         if is_stacked == 1:
+            GPIO.setup(PIN_LED, GPIO.OUT)
             GPIO.output(PIN_LED, 1)
             for _ in range(2):
                 time.sleep(0.5)
@@ -233,10 +231,14 @@ def check_stuck(is_stacked):
             make_csv.print("warning", "Stacking detected!")
 
             move('s', 1.0, 3)
+            time.sleep(0.5)
             move('d', 1.0, 1)
+            time.sleep(0.5)
             move('w', 1.0, 2)
+            time.sleep(0.5)
             stop()
-
+            
+            GPIO.setup(PIN_LED, GPIO.OUT)
             GPIO.output(PIN_LED, 0)
             time.sleep(1)
     except Exception as e:

@@ -3,48 +3,60 @@ import time
 
 # GPIOピンの設定
 TRIG = 6  # トリガー
-ECHO = 14  # エコー
+ECHO = 25  # エコー
 
-# 音の速度
-sound_velosity = 34370
+# 音の速度[cm]
+sound_velosity = 33150 + 60 * 25  # 25℃の場合
 
 pi = pigpio.pi()
 if not pi.connected:
     print("pigpioデーモンに接続できません")
-    exit()
 
 pi.set_mode(TRIG, pigpio.OUTPUT)
 pi.set_mode(ECHO, pigpio.INPUT)
 pi.write(TRIG, 0)
 
+
 def distance():
+    timeout_us = (1 * 1000000)
+    start_time = None
+    pulse_start = None
+    pulse_end = None
+
     # トリガーを10μsだけHIGHにする
     pi.write(TRIG, 0)
-    time.sleep(0.0002)
-    pi.write(TRIG, 1)
-    time.sleep(0.00001)
+    time.sleep(0.1)
+    pi.gpio_trigger(TRIG, 10, 1)
+    
     pi.write(TRIG, 0)
 
     # エコーパルスの立ち上がりを待つ
-    start_time = time.time()
+    start_time = pi.get_current_tick()
+    pulse_start = pi.get_current_tick()
     while pi.read(ECHO) == 0:
-        pulse_start = time.time()
-        if pulse_start - start_time > 1:
+        pulse_start = pi.get_current_tick()
+        if pulse_start - start_time > timeout_us:
+            print("タイムアウト: pulse_end")
             return None  # タイムアウト
-
+        
     # エコーパルスの立ち下がりを待つ
-    start_time = time.time()
+    start_time = pi.get_current_tick()
+    pulse_end = pi.get_current_tick()
     while pi.read(ECHO) == 1:
-        pulse_end = time.time()
-        if pulse_end - start_time > 1:
+        pulse_end = pi.get_current_tick()
+        if pulse_end - start_time > timeout_us:
+            print("タイムアウト: pulse_end")
             return None  # タイムアウト
-
+        
+    # パルス幅から距離を計算
+    if pulse_end is None:
+        print("pulse_end is None")
+        return None
     pulse_duration = pulse_end - pulse_start
     
-    # 距離計算
-    distance = pulse_duration * (sound_velosity / 2)
-    distance = round(distance, 2)
-    return distance
+    # 距離(cm) = (時間(s) * 音速(cm/s)) / 2
+    distance = ((pulse_duration / 1000000.0) * sound_velosity) / 2
+    return round(distance, 2)
 
 if __name__ == "__main__":
     try:
