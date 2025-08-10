@@ -21,9 +21,9 @@ def main():
         print("--- motorをsetupする。")
         motordrive.setup_motors()
 
-        print("前進 (w): 強さ1.0で、3秒間動かす")
-        motordrive.move('w', 1.0, 3)
-        time.sleep(1)
+        #print("前進 (w): 強さ1.0で、3秒間動かす")
+        #motordrive.move('w', 1.0, 3)
+        #time.sleep(1)
 
         """
         print("後退 (s): 強さ1.0で、1.5秒間動かす")
@@ -52,8 +52,8 @@ def main():
         """
 
         # 本当は以下のように使う
-        # is_stucked = motordrive.move(w, 1.0, 5.0) # スタックしたら返り値で1を返す
-        # motordrive.check_stuck(is_stucked) # 1が入力されたらスタック時の動作を行う
+        is_stucked = motordrive.move(w, 1.0, 5.0) # スタックしたら返り値で1を返す
+        motordrive.check_stuck(is_stucked) # 1が入力されたらスタック時の動作を行う
 
         #motordrive.check_stuck(motordrive.move(w, 1.0, 5.0)) #スタック検知付きの移動
 
