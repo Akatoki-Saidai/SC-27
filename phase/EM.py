@@ -24,12 +24,13 @@ import ijochi  # 異常値棄却関数: abnormal_check(sensor_name, value_name, 
 # --------------------------- #
 
 # ゴールの位置を入力(能代宇宙広場)
+# 未確定
 goal_lat = 40.14389563045866
 goal_lon = 139.98732883121738
 make_csv.print("goal_lat", goal_lat)
 make_csv.print("goal_lon", goal_lon)
 
-# モータを起動させたときの機体の回転速度ω[rad/s]
+# 2個のモータを強さ1.0で回転させたときの機体の回転速度ω[rad/s]
 omega = math.pi / 2  # rad/s
 
 # 移動していない判定のカウンター
@@ -101,7 +102,7 @@ def main():
         while True:
 
             # --------------------------- #
-            #        待機フェーズ         #
+            #        待機フェーズ          #
             # --------------------------- #
             if phase == 0:
                 try:
@@ -139,7 +140,7 @@ def main():
 
 
             # --------------------------- #
-            #        落下フェーズ         #
+            #        落下フェーズ          #
             # --------------------------- #
             elif phase == 1:
                 try:
@@ -182,20 +183,20 @@ def main():
                         if consecutive_count >= 5:
                             make_csv.print("msg","ニクロム線切断開始")
                             print("ニクロム線切断開始")
-
+                            
+                            #ここにニクロム線を切るコード
                             #ニクロム線切断
                             nichrome_pin = 16
                             '''
                             GPIO.setmode(GPIO.BCM)
                             GPIO.setup(nichrome_pin, GPIO.OUT)
                             GPIO.output(nichrome_pin, 1)
-                            time.sleep(5)
+                            time.sleep(5) # 
                             GPIO.output(nichrome_pin, 0)
                             '''
                             make_csv.print("msg","ニクロム線切断完了")
                             print("ニクロム線切断完了")
                             
-                            #ここにニクロム線を切るコード
                             #ニクロム線を切ったあと
 
                             # 初期位置の緯度経度を取得
@@ -260,12 +261,12 @@ def main():
                     make_csv.print("goal_relative_angle_rad", angle_to_goal)
 
                     # 移動していない判定
-                    if distance_to_goal == 2323232323:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
+                    if distance_to_goal == 2727272727:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
                         no_movement_count += 1
                         print("移動していない判定: ", no_movement_count, "回")
                         make_csv.print("msg", f"移動していない判定: {no_movement_count}回")
-                        if no_movement_count >= 23:
-                            print("移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
+                        if no_movement_count >= 20:
+                            print("移動していない判定が20回に達しました。強制的に近距離フェーズに移行します。")
                             make_csv.print("msg", "移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
                             phase = 3  # 近距離フェーズに移行
                             make_csv.print("phase", 3)
@@ -302,7 +303,7 @@ def main():
                             make_csv.print("motor_l", 0)
                             time.sleep(1)
 
-                        ###5秒前進 & スタック検知###
+                        ##### 5秒前進 & スタック検知 #####
                         is_stacked = motordrive.move('w', 1.0, 5.0)
                         make_csv.print("motor_l", 1.0)  # 左モーター
                         make_csv.print("motor_r", 1.0)  # 右モーター
