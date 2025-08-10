@@ -18,7 +18,7 @@ pi.write(TRIG, 0)
 
 
 def distance():
-    timeout_us = (1 * 10000000)
+    timeout_us = (1 * 1000000)
     start_time = None
     pulse_start = None
     pulse_end = None
