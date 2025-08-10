@@ -7,6 +7,7 @@ import numpy as np
 
 import camera as cam
 import motordrive
+import bno
 import hcsr04 as ultrasonic
 
 
@@ -91,7 +92,7 @@ def main():
                     # コーンが見つからなかったとき
                     motordrive.move('d', 1.0, 0.2)
                     # あとでmotordriveを確認する
-                    # motordrive.stop()
+                    motordrive.stop()
                     time.sleep(0.8)
 
                 elif camera_order == 1:
