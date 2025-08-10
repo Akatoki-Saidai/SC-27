@@ -7,6 +7,8 @@ import numpy as np
 from bno055 import BNO055
 import make_csv # CSV出力を使う場合はコメント解除
 
+import ijochi
+
 delta_power = 0.1 # スムーズな加速・減速のための刻み幅
 
 # DCモータのピン設定
@@ -19,7 +21,6 @@ PIN_RIGHT_BACKWARD = 23 # 回路図のU4, IN1 (GPIO18)
 PIN_LEFT_FORWARD = 13 # 回路図のU5, IN2 (GPIO24)
 PIN_LEFT_BACKWARD = 24 # 回路図のU5, IN1 (GPIO13)
 
-# LEDのピン設定
 PIN_LED = 5
 
 # グローバル変数としてモーター保持
@@ -167,7 +168,7 @@ def move(direction, power, duration):
                     if not bno:
                         is_current_segment_stacking = False
                         break
-                    Gyro = bno.gyroscope()
+                    Gyro = ijochi.abnormal_check("bno", "gyro", bno.gyroscope(), ERROR_FLAG=True)
                     make_csv.print('gyro', Gyro)
                     if direction in ['a', 'd']:
                         if abs(Gyro[2]) > 0.4:
@@ -187,9 +188,9 @@ def move(direction, power, duration):
 
                 try:
                     if bno and bno.gravity():
-                        gravity = bno.gravity()
-                        gravity_z = gravity[2]
+                        gravity = ijochi.abnormal_check("bno", "gravity", bno.gravity(), ERROR_FLAG=True)
                         make_csv.print('grav', gravity)
+                        gravity_z = gravity[2]
                         if gravity_z < 0.5:
                             print('機体がひっくり返っています！姿勢補正を開始します。')
                             make_csv.print('warning', 'muki_hantai')
@@ -246,7 +247,6 @@ def check_stuck(is_stacked):
     except Exception as e:
         print(f"An error occurred in stack check: {e}")
         make_csv.print("error", f"An error occurred in stack check: {e}")
-
 
 
 if __name__ == "__main__":

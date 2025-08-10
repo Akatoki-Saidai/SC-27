@@ -7,6 +7,8 @@ import numpy as np
 from bno055 import BNO055
 import make_csv # CSV出力を使う場合はコメント解除
 
+import ijochi
+
 delta_power = 0.1 # スムーズな加速・減速のための刻み幅
 
 # DCモータのピン設定
@@ -166,7 +168,7 @@ def move(direction, power, duration):
                     if not bno:
                         is_current_segment_stacking = False
                         break
-                    Gyro = bno.gyroscope()
+                    Gyro = ijochi.abnormal_check("bno", "gyro", bno.gyroscope(), ERROR_FLAG=True)
                     if direction in ['a', 'd']:
                         if abs(Gyro[2]) > 0.4:
                             is_current_segment_stacking = False
@@ -185,7 +187,7 @@ def move(direction, power, duration):
 
                 try:
                     if bno and bno.gravity():
-                        gravity_z = bno.gravity()[2]
+                        gravity_z = ijochi.abnormal_check("bno", "gravity", bno.gravity(), ERROR_FLAG=True)[2]
                         if gravity_z < 0.5:
                             print('機体がひっくり返っています！姿勢補正を開始します。')
                             make_csv.print('warning', 'muki_hantai')
