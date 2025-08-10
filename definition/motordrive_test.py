@@ -52,10 +52,10 @@ def main():
         """
 
         # 本当は以下のように使う
-        is_stucked = motordrive.move(w, 1.0, 5.0) # スタックしたら返り値で1を返す
+        is_stucked = motordrive.move("w", 1.0, 5.0) # スタックしたら返り値で1を返す
         motordrive.check_stuck(is_stucked) # 1が入力されたらスタック時の動作を行う
 
-        #motordrive.check_stuck(motordrive.move(w, 1.0, 5.0)) #スタック検知付きの移動
+        #motordrive.check_stuck(motordrive.move("w", 1.0, 5.0)) #スタック検知付きの移動
 
         print("Finish!!!!!!!!!!")
 
