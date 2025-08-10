@@ -192,6 +192,7 @@ def move(direction, power, duration):
                             start_correction = time.time()
                             while bno.gravity()[2] > 0.5 and (time.time() - start_correction) < 5:
                                 move("w", 1.0, 2.0) # 前進2.0秒
+                                time.sleep(0.5)
                             if time.time() - start_correction >= 5:
                                 print('補正失敗')
                                 make_csv.print('warning', 'orientation_correction_failed')
