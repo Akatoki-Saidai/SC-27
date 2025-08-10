@@ -5,8 +5,8 @@ import time
 TRIG = 6  # トリガー
 ECHO = 14  # エコー
 
-# 音の速度
-sound_velosity = 34370
+# 音の速度[cm]
+sound_velosity = 33150 + 60 * 25 # 25℃の場合
 
 pi = pigpio.pi()
 if not pi.connected:
