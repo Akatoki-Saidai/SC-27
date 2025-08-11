@@ -36,7 +36,7 @@ def distance():
     while pi.read(ECHO) == 0:
         pulse_start = pi.get_current_tick()
         if pulse_start - start_time > timeout_us:
-            print("タイムアウト: pulse_end")
+            print("タイムアウト1: pulse_end")
             return None  # タイムアウト
         
     # エコーパルスの立ち下がりを待つ
@@ -45,7 +45,7 @@ def distance():
     while pi.read(ECHO) == 1:
         pulse_end = pi.get_current_tick()
         if pulse_end - start_time > timeout_us:
-            print("タイムアウト: pulse_end")
+            print("タイムアウト2: pulse_end")
             return None  # タイムアウト
         
     # パルス幅から距離を計算
