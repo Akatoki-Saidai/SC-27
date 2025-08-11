@@ -25,10 +25,10 @@ def distance():
     pulse_start = None
     pulse_end = None
 
-    # トリガーを10μsだけHIGHにする
+    # トリガーを20μsだけHIGHにする
     pi.write(TRIG, 0)
     time.sleep(0.1)
-    pi.gpio_trigger(TRIG, 10, 1)
+    pi.gpio_trigger(TRIG, 20, 1)
     
 
     
