@@ -41,14 +41,14 @@ def distance():
     while pi.read(ECHO) == 0:
         pulse_start = pi.get_current_tick()
         if pi.get_current_tick() - start_tick > timeout_us:
-            # print("タイムアウト1: ECHOがHIGHになりませんでした。")
+            print("タイムアウト1: ECHOがHIGHになりませんでした。")
             return None
 
     # エコーパルスの立ち下がり（LOW）を待つ
     while pi.read(ECHO) == 1:
         pulse_end = pi.get_current_tick()
         if pi.get_current_tick() - start_tick > timeout_us:
-            # print("タイムアウト2: ECHOがLOWになりませんでした。")
+            print("タイムアウト2: ECHOがLOWになりませんでした。")
             return None
 
     if pulse_end < pulse_start: # タイムスタンプが一周した場合の処理
