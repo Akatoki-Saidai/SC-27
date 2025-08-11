@@ -22,20 +22,13 @@ pi.write(TRIG, 0)
 time.sleep(0.1)  # センサーの安定化のため待機
 
 def distance():
-    # タイムアウトの設定 (μs)
-    # HC-SR04の最大測定距離は約4m。往復で約8m。
-    # 8m / 343m/s = 0.0233s = 23300μs。
-    # 余裕をもって50ms(50000μs)程度のタイムアウトを設定。
     timeout_us = 50000
 
-    # トリガーパルス生成
-    pi.write(TRIG, 1)
-    time.sleep(0.00001)  # 10μs待機
-    pi.write(TRIG, 0)
+    # トリガーパルス生成（pigpioの専用機能を使用）
+    pi.gpio_trigger(TRIG, 10, 1) # 10μsのHIGHパルスを生成
 
     start_tick = pi.get_current_tick()
     pulse_start = 0
-    pulse_end = 0
 
     # エコーパルスの立ち上がり（HIGH）を待つ
     while pi.read(ECHO) == 0:
