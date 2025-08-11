@@ -63,7 +63,7 @@ def main():
 
         try:
 
-            if phase == 2:
+            if phase == 3:
                 #フェーズ3(ラピッド)の処理
 
                 if cam_frag == False:
