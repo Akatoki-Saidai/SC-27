@@ -20,14 +20,14 @@ def get_distance():
     # EchoピンがHIGHになるまで待機（タイムアウト付き）
     start_time = time.time()
     while not GPIO.input(echo_pin):
-        if (time.time() - start_time) > 0.1:
+        if (time.time() - start_time) > 1:
             return -1  # タイムアウト
     t1 = time.time()
 
     # EchoピンがLOWになるまで待機（タイムアウト付き）
     start_time = time.time()
     while GPIO.input(echo_pin):
-        if (time.time() - start_time) > 0.1:
+        if (time.time() - start_time) > 1:
             return -1  # タイムアウト
     t2 = time.time()
 
