@@ -186,6 +186,19 @@ def judge_cone(frame):
         else:
             print("Colorcone is None or too small")
             camera_order = 0
+
+            # どこにあるかだけ赤色検出
+            colorcone_x_persent = (red_center_x - frame_center_x) / frame.shape[1]
+            print(f"relative_red_x: {colorcone_x_persent}")
+            if -0.25 <= colorcone_x_persent <= 0.25:
+                print("Red is in the center")
+            elif colorcone_x_persent > 0.25:
+                print("Red is in the right")
+            elif colorcone_x_persent < -0.25:
+                print("Red is in the left")
+            else:
+                print("Red is none")
+            
         
         if yolo_xylist:
             # Bounding Box描画
