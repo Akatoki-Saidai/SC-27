@@ -12,7 +12,7 @@ GPIO.setup(trig_pin, GPIO.OUT)          # Trigピン出力モード設定
 GPIO.setup(echo_pin, GPIO.IN)           # Echoピン入力モード設定
 
 def get_distance():
-    # Trigピンを10μsだけHIGHにして超音波の発信開始
+    # Trigピンを10μsだけHIGHにして超音波の発信開始
     GPIO.output(trig_pin, GPIO.HIGH)
     time.sleep(0.000010)
     GPIO.output(trig_pin, GPIO.LOW)
