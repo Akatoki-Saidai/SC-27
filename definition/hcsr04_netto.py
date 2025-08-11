@@ -12,7 +12,7 @@ GPIO.setup(trig_pin, GPIO.OUT)
 GPIO.setup(echo_pin, GPIO.IN)
 
 def get_distance():
-    # Trigピンを10μsだけHIGHにして超音波の発信開始
+    # Trigピンを100μsだけHIGHにして超音波の発信開始
     GPIO.output(trig_pin, GPIO.HIGH)
     # time.sleep(0.000010)
     time.sleep(0.0001)
@@ -42,7 +42,7 @@ try:
             print("Distance: {:.1f} cm".format(distance))
         else:
             print("測定に失敗しました")
-        time.sleep(1)
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     GPIO.cleanup()
