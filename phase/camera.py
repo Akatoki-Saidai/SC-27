@@ -132,7 +132,7 @@ def judge_cone(frame):
             colorcone_x_persent = (red_center_x - frame_center_x) / frame.shape[1]
             print(f"relative_red_x: {colorcone_x_persent}")
 
-            if -0.05 <= colorcone_x_persent <= 0.055:
+            if -0.05 <= colorcone_x_persent <= 0.05:
                 print("The red object is in the center")  #直進
                 camera_order = 1
             elif colorcone_x_persent > 0.05:
