@@ -81,7 +81,7 @@ def main():
 
                 try:
                     relative_cone_x = 0
-                    frame, relative_cone_x, camera_order = cam.judge_cone(frame)
+                    frame, relative_cone_x, camera_order, red_area = cam.judge_cone(frame)
                 except Exception as e:
                     print(f"An error occured in judging relative_cone : {e}")
 
