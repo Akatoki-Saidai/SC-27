@@ -1,5 +1,4 @@
 # camera
-import os
 import time
 from ultralytics import YOLO
 import cv2
@@ -9,13 +8,22 @@ from picamera2 import Picamera2
 # 同じディレクトリに重みを置く
 pt_path = "./my_custom_model.pt"
 
-
+# YOLOv11nモデルをロード
+try:
+    model = YOLO(pt_path)
+    print("YOLO model loaded.")
+except Exception as e:
+    print(f"Error loading YOLO model: {e}")
+    model = None
+    
 def yolo_detect(frame):
     yolo_xylist = 0
     center_x = 0
     
-    # YOLOv10nモデルをロード
-    model = YOLO(pt_path)
+    if model is None:
+        print("YOLO model reloaded.")
+        model = YOLO(pt_path)
+
     # 推論
     yolo_results = model.predict(frame, save = False, show = False)
     print(type(yolo_results))
@@ -37,17 +45,15 @@ def yolo_detect(frame):
         center_x = 0
 
     else:
-        for i in range(len(Bounding_box)):
-            confidence = confidences[i]
-            if confidence < confidence_best:
-                continue
-            else:
-                confidence_best = confidence
-            xmin, ymin, xmax, ymax = Bounding_box[i]
-                
+        best_index = np.argmax(confidences)
+        confidence_best = confidences[best_index]
+        best_box = Bounding_box[best_index]
+        
+        xmin, ymin, xmax, ymax = best_box
+        
         center_x = int(xmin + (xmax - xmin) / 2)
-        yolo_xylist = [xmin, ymin, xmax, ymax, confidence]
-
+        yolo_xylist = [xmin, ymin, xmax, ymax, confidence_best]
+    
     return yolo_xylist, center_x
 
 
@@ -146,8 +152,8 @@ def judge_cone(frame):
                 camera_order = 0
 
         elif red_persent > 0.02:
-            print("judge red object by yolo")
             try:
+                print("judge red object by yolo")
                 # YOLO呼び出し
                 yolo_xylist, yolo_center_x = yolo_detect(frame)
                 print(f"yolo_xylist: {yolo_xylist}, yolo_center_x: {yolo_center_x}")
