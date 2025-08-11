@@ -162,13 +162,13 @@ def judge_cone(frame):
                     colorcone_x_persent = (yolo_center_x - frame_center_x) / frame.shape[1]
                     print(f"relative_yolo_x: {colorcone_x_persent}")
                     
-                    if -0.05 <= colorcone_x_persent <= 0.05:
+                    if -0.25 <= colorcone_x_persent <= 0.25:
                         print("The yolo object is in the center")
                         camera_order = 1
-                    elif colorcone_x_persent > 0.05:
+                    elif colorcone_x_persent > 0.25:
                         print("The yolo object is in the right")
                         camera_order = 2
-                    elif colorcone_x_persent < -0.05:
+                    elif colorcone_x_persent < -0.25:
                         print("The yolo object is in the left")
                         camera_order = 3
                 else:
