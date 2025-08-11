@@ -4,6 +4,7 @@ import time
 from ultralytics import YOLO
 import cv2
 import numpy as np
+import picamera2
 
 import camera as cam
 import motordrive
@@ -20,7 +21,7 @@ cam_frag =False
 
 def main():
 
-    picam2 = cam.Picamera2()
+    picam2 = Picamera2()
     config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (640, 480)})
     picam2.configure(config)  # カメラの初期設定
 
