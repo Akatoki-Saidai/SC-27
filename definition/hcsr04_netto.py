@@ -33,6 +33,7 @@ while True:                                         # 繰り返し処理
         print("測定中")
         distance = '{:.1f}'.format(get_distance())  # 小数点1までまるめ
         print("Distance: " + distance + "cm")       # 表示
+        print("測定完了")
         time.sleep(1)                               # 1秒まつ
 
     except KeyboardInterrupt:                       # Ctrl + C押されたたら
