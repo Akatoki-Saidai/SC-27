@@ -365,13 +365,15 @@ class BNO055(object):
         else:
             """UARTを使ってデータを読み込み"""
             # return self._read_bytes(address, 1)[0]
-        
+
+    """
     def __del__(self):
         """オブジェクトが削除されたときのクリーンアップ"""
         if self._i2c_handle is not None:
             self.pi.i2c_close(self._i2c_handle)
         if hasattr(self, 'pi'):
             self.pi.stop()
+    """
 
     def _read_signed_byte(self, address):
         """1バイトの符号付整数の受信"""
