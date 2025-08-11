@@ -20,6 +20,7 @@ cam_frag =False
 
 
 def main():
+    global cam_frag  # cam_fragがグローバル変数であることを宣言
 
     picam2 = Picamera2()
     config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (640, 480)})
