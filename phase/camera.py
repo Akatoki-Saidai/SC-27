@@ -64,14 +64,14 @@ def red_detect(frame):
     # HSV色空間に変換
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # 赤色のHSVの値域1
-    hsv_min = np.array([0, 117, 104])
-    hsv_max = np.array([11, 255, 255])
+    # 赤色のHSVの値域1  (カメラの都合でかなりオレンジ寄りです)
+    hsv_min = np.array([0, 117, 115])  # 元の値[0, 117, 104]
+    hsv_max = np.array([18, 255, 255])  # 元の値[11, 255, 255]
     mask1 = cv2.inRange(hsv, hsv_min, hsv_max)
 
     # 赤色のHSVの値域2
     hsv_min = np.array([169, 117, 104])
-    hsv_max = np.array([179, 255, 255])
+    hsv_max = np.array([179, 255, 255])  
     mask2 = cv2.inRange(hsv, hsv_min, hsv_max)
 
     return mask1 + mask2
