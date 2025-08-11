@@ -14,6 +14,8 @@ if not pi.connected:
 
 pi.set_mode(TRIG, pigpio.OUTPUT)
 pi.set_mode(ECHO, pigpio.INPUT)
+
+
 pi.write(TRIG, 0)
 
 
@@ -28,11 +30,17 @@ def distance():
     time.sleep(0.1)
     pi.gpio_trigger(TRIG, 10, 1)
     
+
+    
     pi.write(TRIG, 0)
 
     # エコーパルスの立ち上がりを待つ
     start_time = pi.get_current_tick()
     pulse_start = pi.get_current_tick()
+    while pi.read(ECHO) == 1:
+        if pulse_start - start_wait_low_time > timeout_us: 
+            print("タイムアウト0: ECHOがHIGHのままです。")
+            return None
     while pi.read(ECHO) == 0:
         pulse_start = pi.get_current_tick()
         if pulse_start - start_time > timeout_us:
