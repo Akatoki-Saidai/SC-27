@@ -368,7 +368,7 @@ class BNO055(object):
 
     """
     def __del__(self):
-        """オブジェクトが削除されたときのクリーンアップ"""
+        オブジェクトが削除されたときのクリーンアップ
         if self._i2c_handle is not None:
             self.pi.i2c_close(self._i2c_handle)
         if hasattr(self, 'pi'):
