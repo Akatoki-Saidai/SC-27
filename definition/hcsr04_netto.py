@@ -21,28 +21,32 @@ def get_distance():
     # EchoピンがHIGHになるまで待機（タイムアウト付き）
     start_time = time.time()
     while not GPIO.input(echo_pin):
-        if (time.time() - start_time) > 1:
+        if (time.time() - start_time) > 0.1:
             return -1  # タイムアウト
     t1 = time.time()
 
     # EchoピンがLOWになるまで待機（タイムアウト付き）
     start_time = time.time()
     while GPIO.input(echo_pin):
-        if (time.time() - start_time) > 1:
+        if (time.time() - start_time) > 0.1:
             return -1  # タイムアウト
     t2 = time.time()
 
     # 時間差から対象物までの距離を計算
     return (t2 - t1) * speed_of_sound / 2
 
+i = 0
+
 try:
     while True:
         distance = get_distance()
+        print(i)
         if distance != -1:
             print("Distance: {:.1f} cm".format(distance))
         else:
             print("測定に失敗しました")
         time.sleep(0.1)
+        i++
 
 except KeyboardInterrupt:
     GPIO.cleanup()
