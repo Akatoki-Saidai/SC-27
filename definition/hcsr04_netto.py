@@ -46,7 +46,7 @@ try:
         else:
             print("測定に失敗しました")
         time.sleep(0.1)
-        i++
+        i = i + 1
 
 except KeyboardInterrupt:
     GPIO.cleanup()
