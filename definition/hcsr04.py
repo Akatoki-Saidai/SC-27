@@ -15,9 +15,9 @@ if not pi.connected:
 pi.set_mode(TRIG, pigpio.OUTPUT)
 pi.set_mode(ECHO, pigpio.INPUT)
 
-
+print("あ")
 pi.write(TRIG, 0)
-
+print("い")
 
 def distance():
     timeout_us = (1 * 1000000)
