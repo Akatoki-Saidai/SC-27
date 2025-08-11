@@ -28,7 +28,7 @@ def get_distance():
     return (t2 - t1) * speed_of_sound / 2 # 時間差から対象物までの距離計算
 
 
-while True:　　　　　　　　　　　　　　　　　　　　　　　　 # 繰り返し処理
+while True:                                         # 繰り返し処理
     try:
         distance = '{:.1f}'.format(get_distance())  # 小数点1までまるめ
         print("Distance: " + distance + "cm")       # 表示
