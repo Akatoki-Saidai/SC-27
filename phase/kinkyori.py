@@ -134,3 +134,5 @@ def main():
         except Exception as e:
             print(f"An error occured in goal phase: {e}")
 
+if __name__ == "__main__":
+    main()
