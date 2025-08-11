@@ -4,7 +4,7 @@ import time
 from ultralytics import YOLO
 import cv2
 import numpy as np
-import Picamera2
+from picamera2 import Picamera2
 
 import camera as cam
 import motordrive
