@@ -92,9 +92,8 @@ def main():
                     print('q interrupted direction by camera')
                     continue
 
-                # 結果に応じてモーターを駆動
-                # 120度で1/3回転なので，1秒の1/3で0.666...秒が120度分
-                rotation_time = abs(relative_cone_x) / 120 * (1/3)  # 1秒で360度回転と仮定
+                # 結果に応じてモーターを駆動 1秒で120度回転
+                rotation_time = abs(relative_cone_x * 120) / 120
 
                 if camera_order == 0:
                     # コーンが見つからなかったとき

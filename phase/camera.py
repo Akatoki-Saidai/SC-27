@@ -132,13 +132,13 @@ def judge_cone(frame):
             colorcone_x_persent = (red_center_x - frame_center_x) / frame.shape[1]
             print(f"relative_red_x: {colorcone_x_persent}")
 
-            if -0.0001 <= colorcone_x_persent <= 0.0001:
+            if -0.05 <= colorcone_x_persent <= 0.05:
                 print("The red object is in the center")  #直進
                 camera_order = 1
-            elif colorcone_x_persent > 0.0001:
+            elif colorcone_x_persent > 0.05:
                 print("The red object is in the right")  #右へ
                 camera_order = 2
-            elif colorcone_x_persent < -0.0001:
+            elif colorcone_x_persent < -0.05:
                 print("The red object is in the left")  #左へ
                 camera_order = 3
             else:
@@ -147,33 +147,36 @@ def judge_cone(frame):
 
         elif red_persent > 0.02:
             print("judge red object by yolo")
-
             try:
                 # YOLO呼び出し
                 yolo_xylist, yolo_center_x = yolo_detect(frame)
                 print(f"yolo_xylist: {yolo_xylist}, yolo_center_x: {yolo_center_x}")
+
+                if yolo_xylist:
+                    colorcone_x_persent = (yolo_center_x - frame_center_x) / frame.shape[1]
+                    print(f"relative_yolo_x: {colorcone_x_persent}")
+                    
+                    if -0.05 <= colorcone_x_persent <= 0.05:
+                        print("The yolo object is in the center")
+                        camera_order = 1
+                    elif colorcone_x_persent > 0.05:
+                        print("The yolo object is in the right")
+                        camera_order = 2
+                    elif colorcone_x_persent < -0.05:
+                        print("The yolo object is in the left")
+                        camera_order = 3
+                else:
+                    # YOLOが何も検出しなかった場合
+                    print("The yolo object is not found")
+                    camera_order = 0
+
             except Exception as e:
                 print(f"An error occured in yolo_detect: {e}")
-
-            # 画像幅に対してどのくらい離れているか計算
-            colorcone_x_persent = (red_center_x - frame_center_x) / (frame.shape[0] * frame.shape[1])
-            print(f"relative_red_x: {colorcone_x_persent}")
-            
-            if -0.05 <= colorcone_x_persent <= 0.05:
-                print("The yolo object is in the center")  #直進
-                camera_order = 1
-            elif colorcone_x_persent > 0.05:
-                print("The yolo object is in the right")  #右へ
-                camera_order = 2
-            elif colorcone_x_persent < -0.05:
-                print("The yolo object is in the left")  #左へ
-                camera_order = 3
-            else:
-                print("The yolo object is too minimum")
                 camera_order = 0
         
         else:
-            print("Colorcone is None")
+            print("Colorcone is None or too small")
+            camera_order = 0
         
         if yolo_xylist:
             # Bounding Box描画
