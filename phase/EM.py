@@ -391,6 +391,10 @@ def main():
                     # フレームを取得
                     frame = picam2.capture_array()
                     frame = cv2.rotate(frame, cv2.ROTATE_180)
+                    
+                    # 画像がRGBAの場合はRGBに変換
+                    if frame.shape[2] == 4:
+                        frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)  # BGRA → BGR(RGBと等価)
 
                     try:
                         relative_cone_x = 0
