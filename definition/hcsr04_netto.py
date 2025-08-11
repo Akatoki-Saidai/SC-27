@@ -15,7 +15,7 @@ def get_distance():
     # Trigピンを10μsだけHIGHにして超音波の発信開始
     GPIO.output(trig_pin, GPIO.HIGH)
     # time.sleep(0.000010)
-    time.sleep(1)
+    time.sleep(0.01)
     GPIO.output(trig_pin, GPIO.LOW)
 
     # EchoピンがHIGHになるまで待機（タイムアウト付き）
