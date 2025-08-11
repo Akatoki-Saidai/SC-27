@@ -17,6 +17,8 @@ except Exception as e:
     model = None
     
 def yolo_detect(frame):
+    global model
+    
     yolo_xylist = 0
     center_x = 0
     
