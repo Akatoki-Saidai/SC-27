@@ -19,6 +19,7 @@ except Exception as e:
 def yolo_detect(frame):
     yolo_xylist = 0
     center_x = 0
+    global model
     
     if model is None:
         print("YOLO model reloaded.")
