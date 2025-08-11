@@ -3,7 +3,7 @@ import time
 import sys
 
 trig_pin = 6
-echo_pin = 25
+echo_pin = 27
 speed_of_sound = 34370  # 20℃での音速(cm/s)
 
 GPIO.setmode(GPIO.BCM)
