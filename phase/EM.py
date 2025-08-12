@@ -18,6 +18,9 @@ import camera as cam
 import hcsr04 as ultrasonic
 import ijochi  # 異常値棄却関数: abnormal_check(sensor_name, value_name, sensor_value, ERROR_FLAG=True)
 
+# 超音波の返り値がNone専用の例外クラス
+class NoneDistanceError(Exception):
+    pass
 
 # --------------------------- #
 #             入力            #
@@ -35,6 +38,9 @@ omega = math.pi / 2  # rad/s
 
 # 移動していない判定のカウンター
 no_movement_count = 0
+
+timeout_count = 0
+#超音波が距離を取得できなかった回数を記録
 
 # 同じディレクトリに重みを置く
 pt_path = "./SC-27_yolo_ver1.pt"
@@ -453,21 +459,54 @@ def main():
                         time.sleep(0.5)
 
                     elif camera_order == 4:
-                        # コーンが十分に大きく見えるとき，ゴールフェーズへ
-                        # あとでここに距離センサのコードを用意する
-                        goal_distance = ultrasonic.distance()
-                        print(f"goal_distance: {goal_distance} cm")
-                        make_csv.print("goal_distance", goal_distance)
-                        
-                        if goal_distance < 60:
-                            motordrive.move('w', 0.8, 0.1)
-                            make_csv.print("motor_r", 0.8)
-                            make_csv.print("motor_l", 0.8)
+                        try:
+                            # コーンが十分に大きく見えるとき，ゴールフェーズへ
+                            # あとでここに距離センサのコードを用意する
+                            goal_distance = ultrasonic.distance()
+                            print(f"goal_distance: {goal_distance} cm")
+                            make_csv.print("goal_distance", goal_distance)
+
+                            #超音波が測定失敗した場合，測定を繰り返す
+                            while goal_distance is None:
+                                timeout_count += 1
+                                print(f"超音波が距離を取得できませんでした({timeout_count}回目)")
+                                if timeout_count == 10 or timeout_count == 20:
+                                    # 10回or20回連続Noneだった場合は専用の例外を投げる
+                                    raise NoneDistanceError("距離が取得できませんでした（None）")
+                                goal_distance = ultrasonic.distance()
+                                print(f"goal_distance: {goal_distance} cm")
+                                make_csv.print("goal_distance", goal_distance)
+
+                            if goal_distance < 60:
+                                timeout_count = 0
+                                motordrive.move('w', 0.8, 0.1)
+                                make_csv.print("motor_r", 0.8)
+                                make_csv.print("motor_l", 0.8)
+                                phase = 4
+                                make_csv.print("phase", 4)
+                                print("ended short phase")
+                                make_csv.print("msg", "ended short phase")
+
+                            else:
+                                timeout_count = 0
+                        except NameError as e:
+                            print("超音波の関数が未定義のため強制的にフェーズ4に移行します:", e)
                             phase = 4
-                            make_csv.print("phase", 4)
                             print("ended short phase")
-                            make_csv.print("msg", "ended short phase")
-                
+                        except NoneDistanceError as e:
+                            if timeout_count == 10:#10回取得できなかったら前進し，カメラ認識も行う
+                                print("超音波が距離を取得できなかったため強制的に前進します")
+                                motordrive.move('w', 0.8, 0.1)
+                            elif timeout_count == 20:#20回取得できなかったらフェーズ移行:
+                                print("強制前進後,超音波が距離を取得できなかったため，フェーズを強制移行します")
+                                phase = 4
+                                make_csv.print("phase", 4)
+                                print("ended short phase")
+                                make_csv.print("msg", "ended short phase")
+
+                        except Exception as e:
+                            print(f"エラーが発生(phase3,camera_order == 4):{e}")
+
                 except Exception as e:
                     print(f"An error occured in phase 3: {e}")
                     make_csv.print('error', f"An error occured in phase 3: {e}")

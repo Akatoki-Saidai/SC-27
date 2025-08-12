@@ -130,11 +130,17 @@ def main():
                         goal_distance = ultrasonic.distance()
                         print(f"goal_distance: {goal_distance} cm")
 
-                        if goal_distance is None:
-                            # Noneだった場合は専用の例外を投げる
-                            raise NoneDistanceError("距離が取得できませんでした（None）")
+                        #超音波が測定失敗した場合，測定を繰り返す
+                        while goal_distance is None:
+                            timeout_count += 1
+                            print(f"超音波が距離を取得できませんでした({timeout_count}回目)")
+                            if timeout_count == 10 or timeout_count == 20:
+                                # 10回or20回連続Noneだった場合は専用の例外を投げる
+                                raise NoneDistanceError("距離が取得できませんでした（None）")
+                            goal_distance = ultrasonic.distance()
+                            print(f"goal_distance: {goal_distance} cm")
 
-                        elif goal_distance < 60:
+                        if goal_distance < 60:
                             timeout_count = 0
                             motordrive.move('w', 0.8, 0.1)
                             phase = 4
@@ -148,9 +154,7 @@ def main():
                         phase = 4
                         print("ended short phase")
                     except NoneDistanceError as e:
-                        timeout_count += 1
-                        print(f"超音波が距離を取得できませんでした({timeout_count}回目)")
-                        if timeout_count == 10:#10回取得できなかったら前進
+                        if timeout_count == 10:#10回取得できなかったら前進し，カメラ認識も行う
                             print("超音波が距離を取得できなかったため強制的に前進します")
                             motordrive.move('w', 0.8, 0.1)
                         elif timeout_count == 20:#20回取得できなかったらフェーズ移行:
@@ -158,8 +162,6 @@ def main():
                             phase = 4
                             print("ended short phase")
 
-                    except Exception as e:
-                        print(f"エラーが発生:{e}")
 
 
         except Exception as e:
