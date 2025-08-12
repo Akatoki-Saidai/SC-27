@@ -3,7 +3,7 @@ import time
 
 # GPIOピンの設定
 TRIG = 6  # トリガー
-ECHO = 27  # エコー
+ECHO = 25  # エコー
 
 # 音の速度[cm/s]
 sound_velocity = 34300  # 20℃の場合の音速（cm/s）。温度によって微調整可能。
