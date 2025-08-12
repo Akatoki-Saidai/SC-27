@@ -18,6 +18,9 @@ pt_path = "./SC-27_yolo_ver1.pt"
 # 途中でカメラを起動するためのフラグ
 cam_frag =False
 
+# None専用の例外クラス
+class NoneDistanceError(Exception):
+    pass
 
 def main():
     global cam_frag  # cam_fragがグローバル変数であることを宣言
@@ -28,6 +31,9 @@ def main():
 
     phase = 0
 
+    timeout_count = 0
+    #超音波が距離を取得できなかった回数を記録
+    
     while True:
         
         # --------------------------- #
@@ -120,13 +126,42 @@ def main():
                 elif camera_order == 4:
                     # コーンが十分に大きく見えるとき，ゴールフェーズへ
                     # あとでここに距離センサのコードを用意する
-                    goal_distance = ultrasonic.distance()
-                    print(f"goal_distance: {goal_distance} cm")
-                    if goal_distance < 60:
-                        motordrive.move('w', 0.8, 0.1)
+                    try:
+                        goal_distance = ultrasonic.distance()
+                        print(f"goal_distance: {goal_distance} cm")
+
+                        if goal_distance is None:
+                            # Noneだった場合は専用の例外を投げる
+                            raise NoneDistanceError("距離が取得できませんでした（None）")
+
+                        elif goal_distance < 60:
+                            timeout_count = 0
+                            motordrive.move('w', 0.8, 0.1)
+                            phase = 4
+                            print("ended short phase")
+
+                        else:
+                            timeout_count = 0
+
+                    except NameError as e:
+                        print("超音波の関数が未定義のため強制的にフェーズ4に移行します:", e)
                         phase = 4
                         print("ended short phase")
-            
+                    except NoneDistanceError as e:
+                        timeout_count += 1
+                        print(f"超音波が距離を取得できませんでした({timeout_count}回目)")
+                        if timeout_count == 10:#10回取得できなかったら前進
+                            print("超音波が距離を取得できなかったため強制的に前進します")
+                            motordrive.move('w', 0.8, 0.1)
+                        elif timeout_count == 20:#20回取得できなかったらフェーズ移行:
+                            print("強制前進後,超音波が距離を取得できなかったため，フェーズを強制移行します")
+                            phase = 4
+                            print("ended short phase")
+
+                    except Exception as e:
+                        print(f"エラーが発生:{e}")
+
+
         except Exception as e:
             print(f"An error occured in short phase: {e}")
 
