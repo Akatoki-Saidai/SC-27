@@ -25,12 +25,12 @@ transformer = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True)
 def idokeido():
     """
     緯度と経度を抽出します
-    一定時間（15秒）GPSデータが取得できなかったらNoneを返します
+    一定時間（10秒）GPSデータが取得できなかったらNoneを返します
     """
     try:
         with serial.Serial(port, baudrate, timeout=1) as ser:
             start_time = time.time()
-            while (time.time() - start_time) < 15:  # 15秒間試行
+            while (time.time() - start_time) < 10:  # 10秒間試行
                 line = ser.readline().decode('ascii', errors='replace')
                 if line.startswith('$GPGGA') or line.startswith('$GPRMC'):
                     try:
@@ -41,7 +41,7 @@ def idokeido():
                             return lat, lon
                     except pynmea2.ParseError:
                         continue
-            print("idokeido: 15秒以内にGPSデータが取得できませんでした。")
+            print("idokeido: 10秒以内にGPSデータが取得できませんでした。")
             return None, None
     except serial.SerialException as e:
         print(f"Serial error: {e}")
@@ -50,19 +50,15 @@ def idokeido():
 def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon):
     # 現在地の緯度経度をメートルに変換
     current_x, current_y = transformer.transform(current_lon, current_lat)
-
     # 前回の現在地（スタート地点）の緯度経度をメートルに変換
     start_x, start_y = transformer.transform(start_lon, start_lat)
-
     # ゴール地点の緯度経度をメートルに変換
     goal_x, goal_y = transformer.transform(goal_lon, goal_lat)
 
     # スタート地点から現在地までの距離を計算する
     distance_start_current = math.sqrt((current_x - start_x)**2 + (current_y - start_y)**2)
-
     # スタート地点からゴール地点までの距離を計算
     distance_start_goal = math.sqrt((goal_x - start_x)**2 + (goal_y - start_y)**2)
-
     # 現在地からゴール地点までの距離を計算
     distance_current_goal = math.sqrt((goal_x - current_x)**2 + (goal_y - current_y)**2)
 
@@ -72,17 +68,17 @@ def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon,
         return distance_start_goal, theta_for_goal
     except:
         print("移動していません")  # 例外処理: ゼロ除算が発生した場合の処理
-        return 2323232323, math.pi * 2
+        return 2727272727, math.pi * 2
 
 def zikan():
     """
     日本時間を抽出します
-    一定時間（15秒）GPSデータが取得できなかったらNoneを返します
+    一定時間（10秒）GPSデータが取得できなかったらNoneを返します
     """
     try:
         with serial.Serial(port, baudrate, timeout=1) as ser:
             start_time = time.time()
-            while (time.time() - start_time) < 15:  # 15秒間試行
+            while (time.time() - start_time) < 10:  # 10秒間試行
                 line = ser.readline().decode('ascii', errors='replace')
                 if line.startswith('$GPRMC'):
                     try:
@@ -93,7 +89,7 @@ def zikan():
                             return dt_jst.strftime('%Y-%m-%d %H:%M:%S')
                     except pynmea2.ParseError:
                         continue
-            print("zikan: 15秒以内にGPSデータが取得できませんでした。")
+            print("zikan: 10秒以内にGPSデータが取得できませんでした。")
             return None
     except serial.SerialException as e:
         print(f"Serial error: {e}")
@@ -111,4 +107,3 @@ def youbi(datetime_str):
     except ValueError:
         print(f"エラー: 無効な日時文字列のフォーマットです: {datetime_str}")
         return None
-
