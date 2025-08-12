@@ -139,12 +139,14 @@ def main():
                                 raise NoneDistanceError("距離が取得できませんでした（None）")
                             goal_distance = ultrasonic.distance()
                             print(f"goal_distance: {goal_distance} cm")
+                            time.sleep(0.5)
 
                         if goal_distance < 60:
                             timeout_count = 0
-                            motordrive.move('w', 0.8, 0.1)
+                            motordrive.move('w', 0.8, 0.5)
                             phase = 4
                             print("ended short phase")
+                            time.sleep(1)
 
                         else:
                             timeout_count = 0
@@ -156,11 +158,12 @@ def main():
                     except NoneDistanceError as e:
                         if timeout_count == 10:#10回取得できなかったら前進し，カメラ認識も行う
                             print("超音波が距離を取得できなかったため強制的に前進します")
-                            motordrive.move('w', 0.8, 0.1)
+                            motordrive.move('w', 0.8, 0.5)
                         elif timeout_count == 20:#20回取得できなかったらフェーズ移行:
                             print("強制前進後,超音波が距離を取得できなかったため，フェーズを強制移行します")
                             phase = 4
                             print("ended short phase")
+                            time.sleep(1)
 
 
 
