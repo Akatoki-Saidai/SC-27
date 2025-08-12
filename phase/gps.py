@@ -24,7 +24,7 @@ transformer = pyproj.Transformer.from_crs(wgs84, utm, always_xy=True)
 
 def idokeido():
     """
-    緯度と経度を抽出します
+    緯度と経度を10進数形式で抽出します
     一定時間（10秒）GPSデータが取得できなかったらNoneを返します
     """
     try:
