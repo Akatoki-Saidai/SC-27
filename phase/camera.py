@@ -130,11 +130,11 @@ def judge_cone(frame):
 
         colorcone_x_persent = 0
         # 中心座標のx座標が画像の中心より大きいか小さいか判定→超音波へ
-        if red_persent > 0.6: # 60 %以上（めっちゃ近い）
+        if red_persent > 0.3: # 30 %以上（めっちゃ近い）
             print("Close to red, check distance of ultrasonic")
             camera_order = 4
 
-        elif red_persent > 0.4: # 40 %以上（ちょい近い）
+        elif red_persent > 0.1: # 10 %以上（ちょい近い）
             print("judge red object by color")
 
             # 画像幅に対してどのくらい離れているか計算
@@ -154,7 +154,7 @@ def judge_cone(frame):
                 print("The red object is too minimum")
                 camera_order = 0
 
-        elif red_persent > 0.02: # 2 %以上（遠すぎ or 無さそう）
+        elif red_persent > 0.01: # 1 %以上（遠すぎ or 無さそう）
             try:
                 print("judge red object by yolo")
                 # YOLO呼び出し
