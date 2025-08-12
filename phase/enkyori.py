@@ -114,11 +114,11 @@ def main():
                 print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
 
                 # 移動していない判定
-                if distance_to_goal == 2323232323:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
+                if distance_to_goal == 2727272727:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
                     no_movement_count += 1
                     print("移動していない判定:", no_movement_count, "回")
-                    if no_movement_count >= 23:
-                        print("移動していない判定が23回に達しました。強制的に近距離フェーズに移行します。")
+                    if no_movement_count >= 27:
+                        print("移動していない判定が27回に達しました。強制的に近距離フェーズに移行します。")
                         break  # whileループを抜けて近距離フェーズに移行
                 else:
                     no_movement_count = 0  # 移動が検出されたらカウンターをリセット
