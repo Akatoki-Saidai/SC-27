@@ -122,7 +122,7 @@ def judge_cone(frame):
             # print(f"red area: {red_area}")
             # フレーム内の赤の割合を計算
             red_persent = red_area / (frame.shape[0] * frame.shape[1])
-            print(f"red persent: {red_persent} %")
+            print(f"red persent: {red_persent * 100:.2f} %")
 
         except Exception as e:
             print(f"An error occured in analize_red: {e}")
@@ -130,11 +130,11 @@ def judge_cone(frame):
 
         colorcone_x_persent = 0
         # 中心座標のx座標が画像の中心より大きいか小さいか判定→超音波へ
-        if red_persent > 0.6:
+        if red_persent > 0.6: # 60 %以上（めっちゃ近い）
             print("Close to red, check distance of ultrasonic")
             camera_order = 4
 
-        elif red_persent > 0.4:
+        elif red_persent > 0.4: # 40 %以上（ちょい近い）
             print("judge red object by color")
 
             # 画像幅に対してどのくらい離れているか計算
@@ -154,7 +154,7 @@ def judge_cone(frame):
                 print("The red object is too minimum")
                 camera_order = 0
 
-        elif red_persent > 0.02:
+        elif red_persent > 0.02: # 2 %以上（遠すぎ or 無さそう）
             try:
                 print("judge red object by yolo")
                 # YOLO呼び出し
@@ -206,7 +206,7 @@ def judge_cone(frame):
             cv2.putText(frame, str(yolo_xylist[4]), (int(yolo_xylist[0]), int(yolo_xylist[1] - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0))
 
             # 面積表示
-            cv2.putText(frame, f"{red_persent} %", (int(yolo_xylist[0]), int(yolo_xylist[3] - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255))
+            cv2.putText(frame, f"{red_persent * 100:.2f} %", (int(yolo_xylist[0]), int(yolo_xylist[3] - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255))
 
             # red_result = cv2.drawContours(mask, [biggest_contour], -1, (0, 255, 0), 2)
         
