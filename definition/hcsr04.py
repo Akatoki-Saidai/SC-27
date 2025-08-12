@@ -3,7 +3,7 @@ import time
 
 # GPIOピンの設定
 TRIG = 6  # トリガー
-ECHO = 27  # エコー
+ECHO = 25  # エコー
 
 # 音の速度[cm]
 sound_velosity = 33150 + 60 * 25  # 25℃の場合
