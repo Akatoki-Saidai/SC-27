@@ -30,8 +30,8 @@ def get_distance():
 i = 1
 while True:                                         # 繰り返し処理
     try:
-        distance = '{:.1f}'.format(get_distance())  # 小数点1までまるめ
         print(f"{i}回目")
+        distance = '{:.1f}'.format(get_distance())  # 小数点1までまるめ
         print("Distance: " + distance + "cm")       # 表示
         time.sleep(1)                               # 1秒まつ
 
