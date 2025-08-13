@@ -63,9 +63,9 @@ def red_detect(frame):
     # HSV色空間に変換
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # 赤色のHSVの値域1  (カメラの都合でかなりオレンジ寄りです)
-    hsv_min = np.array([0, 117, 115])  # 元の値[0, 117, 104]
-    hsv_max = np.array([18, 255, 255])  # 元の値[11, 255, 255]
+    # 赤色のHSVの値域1
+    hsv_min = np.array([0, 117, 104])
+    hsv_max = np.array([11, 255, 255])
     mask1 = cv2.inRange(hsv, hsv_min, hsv_max)
 
     # 赤色のHSVの値域2
@@ -228,10 +228,10 @@ if __name__ == '__main__':
         config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1280, 720)})
         picam2.configure(config)  # カメラの初期設定
         picam2.set_controls({
-            "ExposureTime": 10000,  # 露光時間
-            "AnalogueGain": 1.0,  # ゲイン
-            # "AwbEnable": False,  # ホワイトバランス
-            # "ColourGains": (1.5, 1.2)  # (赤, 青)
+            "ExposureTime": 74000,  # 露光時間
+            "AnalogueGain": 1.2,  # ゲイン
+            "AwbEnable": False,  # ホワイトバランス
+            "ColourGains": (1.35, 2.36)  # (赤, 青)
         })
         picam2.start()
 
