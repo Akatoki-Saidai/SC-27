@@ -75,19 +75,22 @@ def main():
                 if(True):#ここには落下終了の条件文を入れる,今(7/16)あるコード(rakka.py)から引用するとconsecutive_count >= 5:が条件文かな
                     #ここにニクロム線を切るコード
                     #ニクロム線を切ったあと
+
+                    phase = 2
                     
                     # 初期位置の緯度経度を取得
                     start_lat, start_lon = gps.idokeido()
                     count_gps = 0
                     # gpsが取得できるかどうかをここで判定
                     while start_lat is None or start_lon is None:
-                        print("cannot get start_lat, start_lon. retry")
+                        print(f"cannot get start_lat, start_lon. {count_gps} times. retry")
                         start_lat, start_lon = gps.idokeido()
                         count_gps += 1
                         time.sleep(0.5)
                         if count_gps >= 60: # 30秒間gpsが取得できなかったら近距離へ
                             phase = 3
                             break
+                    count_gps = 0
 
                     #遠距離フェーズ最初の5秒前進を実行
                     motordrive.move('w', 1.0, 5.0)
@@ -97,14 +100,16 @@ def main():
                     #5秒進んだ先での現在位置を得る
                     current_lat, current_lon = gps.idokeido()
                     while current_lat is None or current_lon is None:
-                        print("cannot get current_lat, current_lon. retry")
+                        print("cannot get current_lat, current_lon. {count_gps} times. retry")
                         current_lat, current_lon = gps.idokeido()
                         time.sleep(0.5)
+                        if count_gps >= 60: # 30秒間gpsが取得できなかったら近距離へ
+                            phase = 3
+                            break
+                    count_gps = 0
 
                     # FutureWarningを抑制
                     warnings.filterwarnings("ignore", category=FutureWarning)
-
-                    phase = 2
 
 
 
