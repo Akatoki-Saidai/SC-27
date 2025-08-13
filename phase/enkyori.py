@@ -146,38 +146,12 @@ def main():
 
                     ###5秒前進 & スタック検知###
                     is_stacked = motordrive.move('w', 1.0, 5.0)
-
-                    #スタック検知がyesの場合
+                    #スタック検知がyesの場合、スタックしたときの処理が行われる
                     motordrive.check_stuck(is_stacked)
-                    #スタックしたときの処理が行われる
                     
                     #モーター止める
                     motordrive.stop()
                     time.sleep(1)
-
-                        # 機体がひっくり返ってたら回る
-                    try:
-                        accel_start_time = time.time()
-                        if 0 < bno.gravity()[2]:
-                            while 0 < bno.gravity()[2] and time.time() - accel_start_time < 5:
-                                print('muki_hantai')
-                                make_csv.print('warning', 'muki_hantai')
-                                motordrive.move('w', 1.0, 0.5)
-                        else:
-                            if time.time() - accel_start_time >= 5:
-                            # 5秒以内に元の向きに戻らなかった場合
-                                motordrive.move('d', 1.0, 0.5)
-                                time.sleep(0.5)
-                                motordrive.move('a', 1.0, 0.5)
-                                time.sleep(0.5)
-                                continue
-                            else:
-                                print('muki_naotta')
-                                make_csv.print('msg', 'muki_naotta')
-                                motordrive.stop()
-                    except Exception as e:
-                        print(f"An error occured while changing the orientation: {e}")
-                        make_csv.print('error', f"An error occured while changing the orientation: {e}")
 
 
                 # 現在地を更新
