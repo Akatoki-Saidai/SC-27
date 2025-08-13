@@ -6,7 +6,7 @@ import pyproj
 import math
 
 port = "/dev/serial0"
-baudrate = 115200
+baudrate = 9600
 
 # WGS84楕円体のパラメータを定義
 a = 6378137.0
