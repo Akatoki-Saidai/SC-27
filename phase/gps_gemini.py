@@ -56,7 +56,7 @@ def get_longitude():
 # 例: 緯度と経度を取得して表示
 latitude = 0
 longitude = 0
-n = input("平均を何回取りますか")
+n = int(input("平均を何回取りますか"))
 for i in range(1, n + 1):
     print(f"{i}回目")
     latitude += get_latitude()
