@@ -228,10 +228,10 @@ if __name__ == '__main__':
         config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1280, 720)})
         picam2.configure(config)  # カメラの初期設定
         picam2.set_controls({
-            "ExposureTime": 10000,  # 露光時間
+            "ExposureTime": 30000,  # 露光時間
             "AnalogueGain": 1.0,  # ゲイン
-            # "AwbEnable": False,  # ホワイトバランス
-            # "ColourGains": (1.5, 1.2)  # (赤, 青)
+            "AwbEnable": False,  # ホワイトバランス
+            "ColourGains": (1.5, 1.2)  # (赤, 青)
         })
         picam2.start()
 
