@@ -28,8 +28,7 @@ def zenbu():
             start_time = time.time()
             while (time.time() - start_time) < 15:  # 15秒間試行
                 line = ser.readline().decode('ascii', errors='replace')
-                if line:
-                    print(f"line: {line.rstrip()}")
+                print(f"line: {line}")
     except serial.SerialException as e:
         print(f"Serial error: {e}")
         return None
