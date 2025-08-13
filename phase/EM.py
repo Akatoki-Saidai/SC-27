@@ -43,7 +43,7 @@ timeout_count = 0
 #超音波が距離を取得できなかった回数を記録
 
 # 同じディレクトリに重みを置く
-pt_path = "./SC-27_yolo_ver1.pt"
+pt_path = "./my_custom_model.pt"
 
 # 途中でカメラを起動するためのフラグ
 cam_flag = False
