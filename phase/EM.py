@@ -38,6 +38,8 @@ omega = math.pi / 2  # rad/s
 
 # 移動していない判定のカウンター
 no_movement_count = 0
+# gpsのカウンターのタイムアウト
+gps_count_out = 6
 
 timeout_count = 0
 #超音波が距離を取得できなかった回数を記録
@@ -268,7 +270,7 @@ def main():
                         if no_movement_count >= 27:
                             print("移動していない判定が27回に達しました。強制的に近距離フェーズに移行します。")
                             phase = 3
-                                break  # whileループを抜けて近距離フェーズに移行
+                            break  # whileループを抜けて近距離フェーズに移行
                     else:
                         no_movement_count = 0  # 移動が検出されたらカウンターをリセット
 
@@ -311,7 +313,7 @@ def main():
                         print("cannot get current_lat, current_lon. {count_gps} times. retry")
                         start_lat, start_lon = gps.idokeido()
                         time.sleep(0.5)
-                        if count_gps >= 6:
+                        if count_gps >= gps_count_out:
                             phase = 3
                             break
                     count_gps = 0
