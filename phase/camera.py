@@ -230,8 +230,8 @@ if __name__ == '__main__':
         picam2.set_controls({
             "ExposureTime": 74000,  # 露光時間
             "AnalogueGain": 1.2,  # ゲイン
-            # "AwbEnable": False,  # ホワイトバランス
-            # "ColourGains": (1.2, 1.8)  # (赤, 青)
+            "AwbEnable": False,  # ホワイトバランス
+            "ColourGains": (1.35, 2.36)  # (赤, 青)
         })
         picam2.start()
 
@@ -239,21 +239,6 @@ if __name__ == '__main__':
             # フレームを取得
             frame = picam2.capture_array()
             frame = cv2.rotate(frame, cv2.ROTATE_180)
-
-
-            # カメラが環境光に慣れるまで少し待つ
-            print("最適なホワイトバランスを計測中です...")
-            time.sleep(2)
-
-            # 現在のカメラのメタデータを取得
-            metadata = picam2.capture_metadata()
-
-            # メタデータからColourGainsの値を取得
-            colour_gains = metadata["ColourGains"]
-            print(f"✅ 計測完了！")
-            print(f"最適なColourGainsの値は: {colour_gains} です。")
-            print("この値をメインのスクリプトに設定してください。")
-
 
             # RGBに変換
             if frame.shape[2] == 4:
