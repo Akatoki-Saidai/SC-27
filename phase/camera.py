@@ -63,9 +63,9 @@ def red_detect(frame):
     # HSV色空間に変換
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    # 赤色のHSVの値域1  (カメラの都合でかなりオレンジ寄りです)
-    hsv_min = np.array([0, 117, 115])  # 元の値[0, 117, 104]
-    hsv_max = np.array([18, 255, 255])  # 元の値[11, 255, 255]
+    # 赤色のHSVの値域1
+    hsv_min = np.array([0, 117, 104])
+    hsv_max = np.array([11, 255, 255])
     mask1 = cv2.inRange(hsv, hsv_min, hsv_max)
 
     # 赤色のHSVの値域2
@@ -228,10 +228,10 @@ if __name__ == '__main__':
         config = picam2.create_preview_configuration({"format": 'XRGB8888', "size": (1280, 720)})
         picam2.configure(config)  # カメラの初期設定
         picam2.set_controls({
-            "ExposureTime": 45000,  # 露光時間
-            "AnalogueGain": 1.9,  # ゲイン
-            "AwbEnable": False,  # ホワイトバランス
-            "ColourGains": (1.2, 1.8)  # (赤, 青)
+            "ExposureTime": 74000,  # 露光時間
+            "AnalogueGain": 1.2,  # ゲイン
+            # "AwbEnable": False,  # ホワイトバランス
+            # "ColourGains": (1.2, 1.8)  # (赤, 青)
         })
         picam2.start()
 
@@ -239,6 +239,21 @@ if __name__ == '__main__':
             # フレームを取得
             frame = picam2.capture_array()
             frame = cv2.rotate(frame, cv2.ROTATE_180)
+
+
+            # カメラが環境光に慣れるまで少し待つ
+            print("最適なホワイトバランスを計測中です...")
+            time.sleep(2)
+
+            # 現在のカメラのメタデータを取得
+            metadata = picam2.capture_metadata()
+
+            # メタデータからColourGainsの値を取得
+            colour_gains = metadata["ColourGains"]
+            print(f"✅ 計測完了！")
+            print(f"最適なColourGainsの値は: {colour_gains} です。")
+            print("この値をメインのスクリプトに設定してください。")
+
 
             # RGBに変換
             if frame.shape[2] == 4:
