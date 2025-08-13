@@ -87,7 +87,7 @@ def main():
                         start_lat, start_lon = gps.idokeido()
                         count_gps += 1
                         time.sleep(0.5)
-                        if count_gps >= 60: # 30秒間gpsが取得できなかったら近距離へ
+                        if count_gps >= 6: # 60秒間gpsが取得できなかったら近距離へ
                             phase = 3
                             break
                     count_gps = 0
@@ -103,7 +103,7 @@ def main():
                         print("cannot get current_lat, current_lon. {count_gps} times. retry")
                         current_lat, current_lon = gps.idokeido()
                         time.sleep(0.5)
-                        if count_gps >= 60: # 30秒間gpsが取得できなかったら近距離へ
+                        if count_gps >= 6: # 60秒間gpsが取得できなかったら近距離へ
                             phase = 3
                             break
                     count_gps = 0
