@@ -253,73 +253,74 @@ def main():
             #             遠距離フェーズ(phase = 2)              #
             # ************************************************** #
             elif phase == 2:
-                print(current_lat, current_lon)  # 現在位置
+                try:
+                    print(current_lat, current_lon)  # 現在位置
 
-                # 距離と角度を計算し、表示
-                distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon)
-                print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
-                print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
+                    # 距離と角度を計算し、表示
+                    distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon)
+                    print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
+                    print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
 
-                # 移動していない判定
-                if distance_to_goal == 2727272727:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
-                    no_movement_count += 1
-                    print("移動していない判定:", no_movement_count, "回")
-                    if no_movement_count >= 27:
-                        print("移動していない判定が27回に達しました。強制的に近距離フェーズに移行します。")
-                        phase = 3
-                        break  # whileループを抜けて近距離フェーズに移行
-                else:
-                    no_movement_count = 0  # 移動が検出されたらカウンターをリセット
-
-                    # 進行方向を決定
-                    if angle_to_goal > 0:
-                        print("進行方向に対して左方向にゴールがあります")
-                        # ゴールへの角度に比例した時間だけ左回転
-                        rotation_time = angle_to_goal / omega  # 回転時間 = 角度 / 回転速度
-                        # 左に計算された時間だけ回転
-                        motordrive.move('a', 1.0, rotation_time)
-
-                        motordrive.stop()
-                        time.sleep(1)
-
+                    # 移動していない判定
+                    if distance_to_goal == 2727272727:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
+                        no_movement_count += 1
+                        print("移動していない判定:", no_movement_count, "回")
+                        if no_movement_count >= 27:
+                            print("移動していない判定が27回に達しました。強制的に近距離フェーズに移行します。")
+                            phase = 3
+                                break  # whileループを抜けて近距離フェーズに移行
                     else:
-                        print("進行方向に対して右方向にゴールがあります")
-                        # ゴールへの角度に比例した時間だけ右回転
-                        rotation_time = abs(angle_to_goal) / omega  # 回転時間 = 角度 / 回転速度
-                        # 右に計算された時間だけ回転
-                        motordrive.move('d', 1.0, rotation_time)
+                        no_movement_count = 0  # 移動が検出されたらカウンターをリセット
 
+                        # 進行方向を決定
+                        if angle_to_goal > 0:
+                            print("進行方向に対して左方向にゴールがあります")
+                            # ゴールへの角度に比例した時間だけ左回転
+                            rotation_time = angle_to_goal / omega  # 回転時間 = 角度 / 回転速度
+                            # 左に計算された時間だけ回転
+                            motordrive.move('a', 1.0, rotation_time)
+
+                            motordrive.stop()
+                            time.sleep(1)
+
+                        else:
+                            print("進行方向に対して右方向にゴールがあります")
+                            # ゴールへの角度に比例した時間だけ右回転
+                            rotation_time = abs(angle_to_goal) / omega  # 回転時間 = 角度 / 回転速度
+                            # 右に計算された時間だけ回転
+                            motordrive.move('d', 1.0, rotation_time)
+
+                            motordrive.stop()
+                            time.sleep(1)
+
+                        ###5秒前進 & スタック検知###
+                        is_stacked = motordrive.move('w', 1.0, 5.0)
+                        #スタック検知がyesの場合、スタックしたときの処理が行われる
+                        motordrive.check_stuck(is_stacked)
+                
+                        #モーター止める
                         motordrive.stop()
                         time.sleep(1)
 
-                    ###5秒前進 & スタック検知###
-                    is_stacked = motordrive.move('w', 1.0, 5.0)
-                    #スタック検知がyesの場合、スタックしたときの処理が行われる
-                    motordrive.check_stuck(is_stacked)
-                    
-                    #モーター止める
-                    motordrive.stop()
-                    time.sleep(1)
 
+                    # 現在地を更新
+                    start_lat = current_lat
+                    start_lon = current_lon
+                    current_lat, current_lon = gps.idokeido()
+                    while current_lat is None or current_lon is None:
+                        print("cannot get current_lat, current_lon. {count_gps} times. retry")
+                        start_lat, start_lon = gps.idokeido()
+                        time.sleep(0.5)
+                        if count_gps >= 6:
+                            phase = 3
+                            break
+                    count_gps = 0
 
-                # 現在地を更新
-                start_lat = current_lat
-                start_lon = current_lon
-                current_lat, current_lon = gps.idokeido()
-                while current_lat is None or current_lon is None:
-                    print("cannot get current_lat, current_lon. {count_gps} times. retry")
-                    start_lat, start_lon = gps.idokeido()
-                    time.sleep(0.5)
-                    if count_gps >= 6:
+                    # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
+                    if distance_to_goal <= 10:
+                        print("近距離フェーズに移行")
                         phase = 3
                         break
-                count_gps = 0
-
-                # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
-                if distance_to_goal <= 10:
-                    print("近距離フェーズに移行")
-                    phase = 3
-                    break
                     
                 except Exception as e:
                     print(f"An error occured in phase 2: {e}")
