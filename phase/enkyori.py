@@ -78,10 +78,16 @@ def main():
                     
                     # 初期位置の緯度経度を取得
                     start_lat, start_lon = gps.idokeido()
+                    count_gps = 0
+                    # gpsが取得できるかどうかをここで判定
                     while start_lat is None or start_lon is None:
                         print("cannot get start_lat, start_lon. retry")
                         start_lat, start_lon = gps.idokeido()
+                        count_gps += 1
                         time.sleep(0.5)
+                        if count_gps >= 60: # 30秒間gpsが取得できなかったら近距離へ
+                            phase = 3
+                            break
 
                     #遠距離フェーズ最初の5秒前進を実行
                     motordrive.move('w', 1.0, 5.0)
