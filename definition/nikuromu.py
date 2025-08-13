@@ -1,3 +1,6 @@
+import RPi.GPIO as GPIO
+import time
+
 #ニクロム線切断
 nichrome_pin = 16
 try:
