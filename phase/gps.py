@@ -107,3 +107,6 @@ def youbi(datetime_str):
     except ValueError:
         print(f"エラー: 無効な日時文字列のフォーマットです: {datetime_str}")
         return None
+
+lat, lon = idokeido()
+print(f"lat = {lat}, lon = {lon}")
