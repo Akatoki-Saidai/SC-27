@@ -10,6 +10,8 @@ try:
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(nichrome_pin, GPIO.OUT)
     GPIO.setup(LED_pin, GPIO.OUT)
+
+    n = int(input("温め時間はいかがなさいますか"))
     
     GPIO.output(nichrome_pin, 0)
     GPIO.output(LED_pin, 0)
@@ -18,11 +20,11 @@ try:
     print("nicr on")
     GPIO.output(LED_pin, 1)
     GPIO.output(nichrome_pin, 1)
-    for i in range(1, 10 + 1):
+    for i in range(1, n + 1):
         print(f"{i}秒目")
         GPIO.output(LED_pin, (1 + (-1) ** i) / 2)
         time.sleep(1)
-    # 10秒あつくする
+    # n秒あつくする
     GPIO.output(nichrome_pin, 0)
     GPIO.output(LED_pin, 0)
 
