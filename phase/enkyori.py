@@ -91,6 +91,8 @@ def main():
                             phase = 3
                             break
                     count_gps = 0
+                    start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
+                    start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
 
                     #遠距離フェーズ最初の5秒前進を実行
                     motordrive.move('w', 1.0, 5.0)
@@ -108,6 +110,8 @@ def main():
                             phase = 3
                             break
                     count_gps = 0
+                    current_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
+                    current_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
 
                     # FutureWarningを抑制
                     warnings.filterwarnings("ignore", category=FutureWarning)
@@ -176,12 +180,14 @@ def main():
                 current_lat, current_lon = gps.idokeido()
                 while current_lat is None or current_lon is None:
                     print("cannot get current_lat, current_lon. {count_gps} times. retry")
-                    start_lat, start_lon = gps.idokeido()
+                    current_lat, current_lon = gps.idokeido()
                     time.sleep(0.5)
                     if count_gps >= 6:
                         phase = 3
                         break
                 count_gps = 0
+                current_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
+                current_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
 
                 # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
                 if distance_to_goal <= 10:
