@@ -156,10 +156,10 @@ def main():
                         phase = 4
                         print("ended short phase")
                     except NoneDistanceError as e:
-                        if timeout_count == 10:#10回取得できなかったら前進し，カメラ認識も行う
+                        if timeout_count == 10:  #10回取得できなかったら前進し，カメラ認識も行う
                             print("超音波が距離を取得できなかったため強制的に前進します")
                             motordrive.move('w', 0.8, 0.5)
-                        elif timeout_count == 20:#20回取得できなかったらフェーズ移行:
+                        elif timeout_count == 20:  #20回取得できなかったらフェーズ移行:
                             print("強制前進後,超音波が距離を取得できなかったため，フェーズを強制移行します")
                             phase = 4
                             print("ended short phase")
