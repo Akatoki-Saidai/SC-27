@@ -61,14 +61,14 @@ def main():
     while True:
         try:
             # --------------------------- #
-            #        待機フェーズ         #
+            #        待機フェーズ           #
             # --------------------------- #
             if phase == 0:
                 #フェーズ0の処理
                 phase = 1
 
             # --------------------------- #
-            #        落下フェーズ         #
+            #        落下フェーズ           #
             # --------------------------- #
             elif phase == 1:
                 #フェーズ1の処理
@@ -78,8 +78,8 @@ def main():
 
                     phase = 2
                     
-                    # 初期位置の緯度経度を取得
-                    start_lat, start_lon = gps.idokeido()
+                    # 初期位置の緯度経度変数を定義
+                    start_lat, start_lon = None, None
                     count_gps = 0
                     # gpsが取得できるかどうかをここで判定
                     while start_lat is None or start_lon is None:
@@ -97,8 +97,9 @@ def main():
                     motordrive.stop()
                     time.sleep(1)
 
-                    #5秒進んだ先での現在位置を得る
-                    current_lat, current_lon = gps.idokeido()
+                    #5秒進んだ先での現在位置の変数を定義
+                    current_lat, current_lon = None, None
+                    # gpsが取得できるかどうかをここで判定
                     while current_lat is None or current_lon is None:
                         print("cannot get current_lat, current_lon. {count_gps} times. retry")
                         current_lat, current_lon = gps.idokeido()
@@ -130,6 +131,7 @@ def main():
                     print("移動していない判定:", no_movement_count, "回")
                     if no_movement_count >= 27:
                         print("移動していない判定が27回に達しました。強制的に近距離フェーズに移行します。")
+                        phase = 3
                         break  # whileループを抜けて近距離フェーズに移行
                 else:
                     no_movement_count = 0  # 移動が検出されたらカウンターをリセット
@@ -170,9 +172,13 @@ def main():
                 start_lon = current_lon
                 current_lat, current_lon = gps.idokeido()
                 while current_lat is None or current_lon is None:
-                    print("cannot get current_lat, current_lon. retry")
+                    print("cannot get current_lat, current_lon. {count_gps} times. retry")
                     start_lat, start_lon = gps.idokeido()
                     time.sleep(0.5)
+                    if count_gps >= 6:
+                        phase = 3
+                        break
+                count_gps = 0
 
 
                 # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
