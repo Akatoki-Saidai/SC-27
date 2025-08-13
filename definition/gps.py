@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import pyproj
 import math
 
-port = "/dev/serial0"
+port = "/dev/serial1"
 baudrate = 9600
 
 # WGS84楕円体のパラメータを定義
