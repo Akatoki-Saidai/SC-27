@@ -25,13 +25,14 @@ class NoneDistanceError(Exception):
 # --------------------------- #
 #             入力            #
 # --------------------------- #
-
-# ゴールの位置を入力(能代宇宙広場)
-# 未確定
-goal_lat = 40.14389563045866
-goal_lon = 139.98732883121738
+# 秋田県能代宇宙広場 (ゴール地点)
+# 緯度経度をWGS84楕円体に基づいて設定
+goal_lat, goal_lon = 40.1426331, 139.9876369
 make_csv.print("goal_lat", goal_lat)
 make_csv.print("goal_lon", goal_lon)
+
+# pyprojを使ってWGS84楕円体に基づく投影を定義
+# wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')
 
 # 2個のモータを強さ1.0で回転させたときの機体の回転速度ω[rad/s]
 omega = math.pi / 2  # rad/s
