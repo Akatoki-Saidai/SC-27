@@ -155,7 +155,7 @@ def main():
                 try:
                     consecutive_count = 0
 
-                    for _ in range(1):
+                    while consecutive_count < 5:
                         temperature = bme.temperature()
                         pressure = bme.pressure()
                         temperature = ijochi.abnormal_check("bme", "temperature", temperature, ERROR_FLAG=False)
@@ -187,72 +187,71 @@ def main():
                             consecutive_count = 0
                             print(f"落下終了の条件を満たしませんでした")
                             make_csv.print("msg", f"落下終了の条件を満たしませんでした")
-                            time.sleep(0.5)
-
-                        if consecutive_count >= 5:
-                            make_csv.print("msg","ニクロム線切断開始")
-                            print("ニクロム線切断開始")
-                            
-                            #ここにニクロム線を切るコード
-                            #ニクロム線切断
-                            nichrome_pin = 16
-                            GPIO.setmode(GPIO.BCM)
-                            GPIO.setup(nichrome_pin, GPIO.OUT)
-                            
-                            GPIO.output(nichrome_pin, 1)
-                            time.sleep(15) # 15秒温める
-                            
-                            GPIO.output(nichrome_pin, 0)
-                            make_csv.print("msg","ニクロム線切断完了")
-                            print("ニクロム線切断完了")
-                            
-                            #ニクロム線を切ったあと
-
-                            count_gps = 0
-
-                            # 初期位置の緯度経度を取得
-                            start_lat, start_lon = None, None
-                            while start_lat is None or start_lon is None:
-                                print("cannot get start_lat, start_lon. retry")
-                                start_lat, start_lon = gps.idokeido()
-                                start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
-                                start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
-                                time.sleep(0.5)
-                                count_gps += 1
-                                if count_gps >= gps_count_out:
-                                    phase = 3
-                                    break
-                            count_gps = 0
-                            make_csv.print("lat", start_lat)
-                            make_csv.print("lon", start_lon)
-
-                            #遠距離フェーズ最初の5秒前進を実行
-                            motordrive.move('w', 1.0, 5.0)
-                            make_csv.print("motor_l", 1.0)  # 左モーター
-                            make_csv.print("motor_r", 1.0)  # 右モーター
-                            motordrive.stop()
                             time.sleep(1)
 
-                            #5秒進んだ先での現在位置を得る
-                            current_lat, current_lon = None, None
-                            while current_lat is None or current_lon is None:
-                                print("cannot get current_lat, current_lon. retry")
-                                current_lat, current_lon = gps.idokeido()
-                                current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
-                                current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
-                                time.sleep(0.5)
-                                if count_gps >= gps_count_out:
-                                    phase = 3
-                                    break
-                            count_gps = 0
-                            make_csv.print("lat", current_lat)
-                            make_csv.print("lon", current_lon)
+                    make_csv.print("msg","ニクロム線切断開始")
+                    print("ニクロム線切断開始")
+                            
+                    #ここにニクロム線を切るコード
+                    #ニクロム線切断
+                    nichrome_pin = 16
+                    GPIO.setmode(GPIO.BCM)
+                    GPIO.setup(nichrome_pin, GPIO.OUT)
+                    
+                    GPIO.output(nichrome_pin, 1)
+                    time.sleep(15) # 15秒温める
+                            
+                    GPIO.output(nichrome_pin, 0)
+                    make_csv.print("msg","ニクロム線切断完了")
+                    print("ニクロム線切断完了")
+                            
+                    #ニクロム線を切ったあと
 
-                            # FutureWarningを抑制
-                            warnings.filterwarnings("ignore", category=FutureWarning)
+                    count_gps = 0
 
-                            phase = 2
-                            make_csv.print("phase", 2)
+                    # 初期位置の緯度経度を取得
+                    start_lat, start_lon = None, None
+                    while start_lat is None or start_lon is None:
+                        print("cannot get start_lat, start_lon. retry")
+                            start_lat, start_lon = gps.idokeido()
+                            start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
+                            start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
+                            time.sleep(0.5)
+                            count_gps += 1
+                            if count_gps >= gps_count_out:
+                                phase = 3
+                                break
+                        count_gps = 0
+                        make_csv.print("lat", start_lat)
+                        make_csv.print("lon", start_lon)
+
+                        #遠距離フェーズ最初の5秒前進を実行
+                        motordrive.move('w', 1.0, 5.0)
+                        make_csv.print("motor_l", 1.0)  # 左モーター
+                        make_csv.print("motor_r", 1.0)  # 右モーター
+                        motordrive.stop()
+                        time.sleep(1)
+
+                        #5秒進んだ先での現在位置を得る
+                        current_lat, current_lon = None, None
+                        while current_lat is None or current_lon is None:
+                            print("cannot get current_lat, current_lon. retry")
+                            current_lat, current_lon = gps.idokeido()
+                            current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
+                            current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
+                            time.sleep(0.5)
+                            if count_gps >= gps_count_out:
+                                phase = 3
+                                break
+                        count_gps = 0
+                        make_csv.print("lat", current_lat)
+                        make_csv.print("lon", current_lon)
+
+                        # FutureWarningを抑制
+                        warnings.filterwarnings("ignore", category=FutureWarning)
+
+                        phase = 2
+                        make_csv.print("phase", 2)
 
                 except Exception as e:
                     print(f"An error occurred in phase 1: {e}")
