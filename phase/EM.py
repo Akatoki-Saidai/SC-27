@@ -196,13 +196,13 @@ def main():
                             #ここにニクロム線を切るコード
                             #ニクロム線切断
                             nichrome_pin = 16
-                            '''
+                            
                             GPIO.setmode(GPIO.BCM)
                             GPIO.setup(nichrome_pin, GPIO.OUT)
                             GPIO.output(nichrome_pin, 1)
-                            time.sleep(5) # 
+                            time.sleep(20) # 20秒温める
                             GPIO.output(nichrome_pin, 0)
-                            '''
+                            
                             make_csv.print("msg","ニクロム線切断完了")
                             print("ニクロム線切断完了")
                             
