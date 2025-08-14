@@ -36,12 +36,12 @@ def zenbu():
 def idokeido():
     """
     緯度と経度を抽出します
-    一定時間（15秒）GPSデータが取得できなかったらNoneを返します
+    一定時間（10秒）GPSデータが取得できなかったらNoneを返します
     """
     try:
         with serial.Serial(port, baudrate, timeout=1) as ser:
             start_time = time.time()
-            while (time.time() - start_time) < 15:  # 15秒間試行
+            while (time.time() - start_time) < 10:  # 10秒間試行
                 line = ser.readline().decode('ascii', errors='replace')
                 # GGA, RMC, GLLで衛星システム(GP,GL,GA,GN等)を問わず処理
                 if line.startswith('$') and (line[3:6] == 'GGA' or line[3:6] == 'RMC' or line[3:6] == 'GLL'):
@@ -54,7 +54,7 @@ def idokeido():
                             return lat, lon
                     except pynmea2.ParseError:
                         continue
-            print("idokeido: 15秒以内にGPSデータが取得できませんでした。")
+            print("idokeido: 10秒以内にGPSデータが取得できませんでした。")
             return None, None
     except serial.SerialException as e:
         print(f"Serial error: {e}")
