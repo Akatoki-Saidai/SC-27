@@ -211,47 +211,47 @@ def main():
 
                     # 初期位置の緯度経度を取得
                     start_lat, start_lon = None, None
-                    while start_lat is None or start_lon is None:
-                        print("cannot get start_lat, start_lon. retry")
-                            start_lat, start_lon = gps.idokeido()
-                            start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
-                            start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
-                            time.sleep(0.5)
-                            count_gps += 1
-                            if count_gps >= gps_count_out:
-                                phase = 3
-                                break
-                        count_gps = 0
-                        make_csv.print("lat", start_lat)
-                        make_csv.print("lon", start_lon)
+                    while start_lat is None and start_lon is None:
+                        print(f"cannot get start_lat, start_lon. {count_gps * 10} seconds. retry")
+                        start_lat, start_lon = gps.idokeido()
+                        time.sleep(0.5)
+                        count_gps += 1
+                        if count_gps >= gps_count_out:
+                            phase = 3
+                            break
+                    start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
+                    start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
+                    count_gps = 0
+                    make_csv.print("lat", start_lat)
+                    make_csv.print("lon", start_lon)
 
-                        #遠距離フェーズ最初の5秒前進を実行
-                        motordrive.move('w', 1.0, 5.0)
-                        make_csv.print("motor_l", 1.0)  # 左モーター
-                        make_csv.print("motor_r", 1.0)  # 右モーター
-                        motordrive.stop()
-                        time.sleep(1)
+                    #遠距離フェーズ最初の5秒前進を実行
+                    motordrive.move('w', 1.0, 5.0)
+                    make_csv.print("motor_l", 1.0)  # 左モーター
+                    make_csv.print("motor_r", 1.0)  # 右モーター
+                    motordrive.stop()
+                    time.sleep(1)
 
-                        #5秒進んだ先での現在位置を得る
-                        current_lat, current_lon = None, None
-                        while current_lat is None or current_lon is None:
-                            print("cannot get current_lat, current_lon. retry")
-                            current_lat, current_lon = gps.idokeido()
-                            current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
-                            current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
-                            time.sleep(0.5)
-                            if count_gps >= gps_count_out:
-                                phase = 3
-                                break
-                        count_gps = 0
-                        make_csv.print("lat", current_lat)
-                        make_csv.print("lon", current_lon)
+                    #5秒進んだ先での現在位置を得る
+                    current_lat, current_lon = None, None
+                    while current_lat is None and current_lon is None:
+                        print(f"cannot get current_lat, current_lon. {count_gps * 10} seconds. retry")
+                        current_lat, current_lon = gps.idokeido()
+                        time.sleep(0.5)
+                        if count_gps >= gps_count_out:
+                            phase = 3
+                            break
+                    current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
+                    current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
+                    count_gps = 0
+                    make_csv.print("lat", current_lat)
+                    make_csv.print("lon", current_lon)
 
-                        # FutureWarningを抑制
-                        warnings.filterwarnings("ignore", category=FutureWarning)
+                    # FutureWarningを抑制
+                    warnings.filterwarnings("ignore", category=FutureWarning)
 
-                        phase = 2
-                        make_csv.print("phase", 2)
+                    phase = 2
+                    make_csv.print("phase", 2)
 
                 except Exception as e:
                     print(f"An error occurred in phase 1: {e}")
@@ -288,7 +288,6 @@ def main():
                             rotation_time = angle_to_goal / omega  # 回転時間 = 角度 / 回転速度
                             # 左に計算された時間だけ回転
                             motordrive.move('a', 1.0, rotation_time)
-
                             motordrive.stop()
                             time.sleep(1)
 
@@ -298,7 +297,6 @@ def main():
                             rotation_time = abs(angle_to_goal) / omega  # 回転時間 = 角度 / 回転速度
                             # 右に計算された時間だけ回転
                             motordrive.move('d', 1.0, rotation_time)
-
                             motordrive.stop()
                             time.sleep(1)
 
@@ -306,7 +304,7 @@ def main():
                         is_stacked = motordrive.move('w', 1.0, 5.0)
                         #スタック検知がyesの場合、スタックしたときの処理が行われる
                         motordrive.check_stuck(is_stacked)
-                
+                        
                         #モーター止める
                         motordrive.stop()
                         time.sleep(1)
@@ -316,13 +314,15 @@ def main():
                     start_lat = current_lat
                     start_lon = current_lon
                     current_lat, current_lon = None, None
-                    while current_lat is None or current_lon is None:
-                        start_lat, start_lon = gps.idokeido()
-                        print("cannot get current_lat, current_lon. {count_gps} times. retry")
+                    while current_lat is None and current_lon is None:
+                        current_lat, current_lon = gps.idokeido()
+                        print(f"cannot get current_lat, current_lon. {count_gps * 10} seconds. retry")
                         time.sleep(0.5)
                         if count_gps >= gps_count_out:
                             phase = 3
                             break
+                    current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
+                    current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                     count_gps = 0
 
                     # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
