@@ -43,10 +43,12 @@ def idokeido():
             start_time = time.time()
             while (time.time() - start_time) < 15:  # 15秒間試行
                 line = ser.readline().decode('ascii', errors='replace')
-                if line.startswith('$GPGGA') or line.startswith('$GPRMC'):
+                # GGA, RMC, GLLで衛星システム(GP,GL,GA,GN等)を問わず処理
+                if line.startswith('$') and (line[3:6] == 'GGA' or line[3:6] == 'RMC' or line[3:6] == 'GLL'):
                     try:
                         msg = pynmea2.parse(line)
-                        if hasattr(msg, 'latitude') and hasattr(msg, 'longitude'):
+                        # 有効な緯度経度データかチェック
+                        if hasattr(msg, 'latitude') and hasattr(msg, 'longitude') and msg.latitude != 0.0:
                             lat = msg.latitude
                             lon = msg.longitude
                             return lat, lon
@@ -81,8 +83,8 @@ def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon,
     try:
         theta_for_goal = math.pi - math.acos((distance_start_current ** 2 + distance_start_goal ** 2 - distance_current_goal ** 2) / (2 * distance_start_current * distance_current_goal))
         return distance_start_goal, theta_for_goal
-    except:
-        print("移動していません")  # 例外処理: ゼロ除算が発生した場合の処理
+    except Exception as e:
+        print(f"移動していません: {e}")
         return 2323232323, math.pi * 2
 
 def zikan():
@@ -95,7 +97,7 @@ def zikan():
             start_time = time.time()
             while (time.time() - start_time) < 15:  # 15秒間試行
                 line = ser.readline().decode('ascii', errors='replace')
-                if line.startswith('$GPRMC'):
+                if line.startswith('$') and line[3:6] == 'RMC':
                     try:
                         msg = pynmea2.parse(line)
                         if msg.datestamp and msg.timestamp:
@@ -122,4 +124,3 @@ def youbi(datetime_str):
     except ValueError:
         print(f"エラー: 無効な日時文字列のフォーマットです: {datetime_str}")
         return None
-
