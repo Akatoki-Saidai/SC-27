@@ -158,3 +158,15 @@ def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon,
         return 2727272727, math.pi * 2
 
 
+def zenbu():
+    global gps_manager
+
+    start_time = time.time()
+    try:
+        while (time.time() - start_time) < 15:  # 15秒間試行
+            if gps_manager.ser.in_waiting > 0:
+                line = gps_manager.ser.readline().decode('ascii', errors='replace')
+                print(f"line: {line}")
+    except serial.SerialException as e:
+        print(f"Serial error: {e}")
+        return None
