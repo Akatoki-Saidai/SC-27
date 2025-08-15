@@ -27,7 +27,7 @@ class NoneDistanceError(Exception):
 # --------------------------- #
 # 秋田県能代宇宙広場 (ゴール地点)
 # 緯度経度をWGS84楕円体に基づいて設定
-goal_lat, goal_lon = 40.142661833333335, 139.9876495
+goal_lat, goal_lon = 40.14266434, 139.9876452
 make_csv.print("goal_lat", goal_lat)
 make_csv.print("goal_lon", goal_lon)
 

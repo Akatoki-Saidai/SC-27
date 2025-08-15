@@ -8,8 +8,6 @@ import math
 PORT = "/dev/serial0"
 BAUDRATE = 38400
 
-goal_lat, goal_lon = 40.142661833333335, 139.9876495 # 能代宇宙広場 (ゴール地点)
-
 # pyprojを使ってWGS84楕円体に基づく投影を定義
 wgs84 = pyproj.CRS('EPSG:4326')
 utm = pyproj.CRS('+proj=utm +zone=54 +ellps=WGS84')
