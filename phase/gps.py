@@ -8,7 +8,7 @@ import math
 port = "/dev/serial0"
 baudrate = 38400
 
-goal_lat, goal_lon = 40.14389563045866, 139.98732883121738 # 能代宇宙広場 (ゴール地点)
+goal_lat, goal_lon = 40.142661833333335, 139.9876495 # 能代宇宙広場 (ゴール地点)
 
 # pyprojを使ってWGS84楕円体に基づく投影を定義
 wgs84 = pyproj.CRS('EPSG:4326')
@@ -58,7 +58,6 @@ class GpsManager:
                 
                 for line in line_list:
                     try:
-                        print(f"NMEA: {line.strip()}")
                         msg = pynmea2.parse(line)
 
                         # 有効な緯度経度データかチェック
@@ -89,17 +88,6 @@ class GpsManager:
 
       
 gps_manager = GpsManager(port, baudrate)
-
-def zenbu():
-    try:
-        with serial.Serial(port, baudrate, timeout=1) as ser:
-            start_time = time.time()
-            while (time.time() - start_time) < 15:  # 15秒間試行
-                line = ser.readline().decode('ascii', errors='replace')
-                print(f"line: {line}")
-    except serial.SerialException as e:
-        print(f"Serial error: {e}")
-        return None
 
 def idokeido():
     # 緯度と経度を抽出、内部でGPSデータを最新に更新

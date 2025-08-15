@@ -9,7 +9,7 @@ import pyproj
 from bno055 import BNO055
 # from bme280 import BME280Sensor
 import motordrive
-import gps
+import gps_archive as gps
 import make_csv
 
 ##################################################
@@ -28,7 +28,7 @@ f = (a - b) / a
 ##################################################
 # 秋田県能代宇宙広場 (ゴール地点)
 # 緯度経度をWGS84楕円体に基づいて設定
-goal_lat, goal_lon = 40.1426331, 139.9876369
+goal_lat, goal_lon = 440.142661833333335, 139.9876495
 
 # pyprojを使ってWGS84楕円体に基づく投影を定義
 wgs84 = pyproj.Proj('+proj=latlong +ellps=WGS84')

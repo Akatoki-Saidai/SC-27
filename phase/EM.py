@@ -12,7 +12,7 @@ from picamera2 import Picamera2
 from bno055 import BNO055
 from bme280 import BME280Sensor
 import motordrive
-import gps
+import gps_archive as gps
 import make_csv
 import camera as cam
 import hcsr04 as ultrasonic
@@ -27,7 +27,7 @@ class NoneDistanceError(Exception):
 # --------------------------- #
 # 秋田県能代宇宙広場 (ゴール地点)
 # 緯度経度をWGS84楕円体に基づいて設定
-goal_lat, goal_lon = 40.1426331, 139.9876369
+goal_lat, goal_lon = 40.142661833333335, 139.9876495
 make_csv.print("goal_lat", goal_lat)
 make_csv.print("goal_lon", goal_lon)
 
@@ -99,7 +99,7 @@ def main():
         make_csv.print("serious_error", f"An error occurred in setting bno055: {e}")
         # return
 
-    #落下フェーズの終わりから開始
+    # 開始
     phase = 0
 
     try:
@@ -218,7 +218,8 @@ def main():
                         count_gps += 1
                         if count_gps >= gps_count_out:
                             phase = 3
-                            break
+                            make_csv.print("phase", 3)
+                            # break
                     start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
                     start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
                     count_gps = 0
@@ -240,7 +241,8 @@ def main():
                         time.sleep(0.5)
                         if count_gps >= gps_count_out:
                             phase = 3
-                            break
+                            make_csv.print("phase", 3)
+                            # break
                     current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
                     current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                     count_gps = 0
@@ -269,7 +271,8 @@ def main():
                     distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon)
                     print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
                     print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
-
+                    make_csv.print('goal_relative_angle_rad', angle_to_goal)
+                    
                     # 移動していない判定
                     if distance_to_goal == 2727272727:  # gps.calculate_distance_and_angle関数で移動していないと判定された場合
                         no_movement_count += 1
@@ -277,7 +280,8 @@ def main():
                         if no_movement_count >= 27:
                             print("移動していない判定が27回に達しました。強制的に近距離フェーズに移行します。")
                             phase = 3
-                            break  # whileループを抜けて近距離フェーズに移行
+                            make_csv.print("phase", 3)
+                            # break  # whileループを抜けて近距離フェーズに移行
                     else:
                         no_movement_count = 0  # 移動が検出されたらカウンターをリセット
 
@@ -288,6 +292,9 @@ def main():
                             rotation_time = angle_to_goal / omega  # 回転時間 = 角度 / 回転速度
                             # 左に計算された時間だけ回転
                             motordrive.move('a', 1.0, rotation_time)
+                            make_csv.print("motor_r", 1.0)
+                            make_csv.print("motor_l", -1.0)
+                                
                             motordrive.stop()
                             time.sleep(1)
 
@@ -297,13 +304,18 @@ def main():
                             rotation_time = abs(angle_to_goal) / omega  # 回転時間 = 角度 / 回転速度
                             # 右に計算された時間だけ回転
                             motordrive.move('d', 1.0, rotation_time)
+                            make_csv.print("motor_r", -1.0)
+                            make_csv.print("motor_l", 1.0)
                             motordrive.stop()
                             time.sleep(1)
 
                         ###5秒前進 & スタック検知###
                         is_stacked = motordrive.move('w', 1.0, 5.0)
+                        make_csv.print("motor_r", 1.0)
+                        make_csv.print("motor_l", 1.0)
                         #スタック検知がyesの場合、スタックしたときの処理が行われる
                         motordrive.check_stuck(is_stacked)
+                        make_csv.print("msg", "stack move")
                         
                         #モーター止める
                         motordrive.stop()
@@ -320,16 +332,19 @@ def main():
                         time.sleep(0.5)
                         if count_gps >= gps_count_out:
                             phase = 3
-                            break
+                            make_csv.print("phase", 3)
+                            # break
                     current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
                     current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                     count_gps = 0
+                    make_csv.print("lat", current_lat)
+                    make_csv.print("lon", current_lon)
 
                     # ゴールの10 m以内に到達したらループを抜け近距離フェーズへ
                     if distance_to_goal <= 10:
                         print("近距離フェーズに移行")
                         phase = 3
-                        break
+                        make_csv.print("phase", 3)
                     
                 except Exception as e:
                     print(f"An error occured in phase 2: {e}")
