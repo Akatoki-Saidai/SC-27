@@ -1,4 +1,4 @@
-import gps
+import gps_archive as gps
 
 # 使用例
 if __name__ == '__main__':
@@ -9,6 +9,7 @@ if __name__ == '__main__':
     else:
         print("緯度経度の取得に失敗しました。")
 
+"""
     print("\n日本時間を取得中...")
     japan_time = gps.zikan()
     if japan_time is not None:
@@ -23,4 +24,7 @@ if __name__ == '__main__':
         print("日本時間の取得に失敗しました。")
     print("全てのデータを表示")
     while True:
-        gps.zenbu()
+        pass
+        # gps.zenbu()
+
+"""

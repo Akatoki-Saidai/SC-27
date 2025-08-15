@@ -90,17 +90,6 @@ class GpsManager:
       
 gps_manager = GpsManager(port, baudrate)
 
-def zenbu():
-    try:
-        with serial.Serial(port, baudrate, timeout=1) as ser:
-            start_time = time.time()
-            while (time.time() - start_time) < 15:  # 15秒間試行
-                line = ser.readline().decode('ascii', errors='replace')
-                print(f"line: {line}")
-    except serial.SerialException as e:
-        print(f"Serial error: {e}")
-        return None
-
 def idokeido():
     # 緯度と経度を抽出、内部でGPSデータを最新に更新
     gps_manager.update()
