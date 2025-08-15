@@ -104,7 +104,7 @@ def main():
 
     try:
         print("セットアップ完了")
-        make_csv.print("msg", "セットアップ完了")
+        make_csv.print("msg", "Finished setup")
         make_csv.print("phase", 0)
 
         # ここから無限ループ
@@ -139,7 +139,7 @@ def main():
                         make_csv.print("phase", 1)
                     else:
                         print("落下を検知できませんでした")
-                        make_csv.print("msg", "落下を検知できませんでした")
+                        make_csv.print("msg", "Failed detect falling.")
 
                     time.sleep(1)
 
@@ -176,21 +176,21 @@ def main():
 
                         # 判断に用いた測定データを記録
                         accel_sum = abs(accel_x) + abs(accel_y) + abs(accel_z)
-                        make_csv.print("msg", f"落下判定: accel_sum={accel_sum:.3f} < 0.5, alt={alt_2:.3f} <= 0.1")
+                        make_csv.print("msg", f"fall detection: accel_sum={accel_sum:.3f} < 0.5, alt={alt_2:.3f} <= 0.1")
 
                         if abs(accel_x) + abs(accel_y) + abs(accel_z) < 0.5 and alt_2 <= 0.1:
                             consecutive_count += 1
-                            print(f"落下終了の条件を満たしました: {consecutive_count}/5")
-                            make_csv.print("msg", f"落下終了の条件を満たしました: {consecutive_count}/5")
+                            print(f"satisfied condition of ending falling: {consecutive_count}/5")
+                            make_csv.print("msg", f"satisfied condition of ending falling: {consecutive_count}/5")
                             time.sleep(1)
                         else:
                             consecutive_count = 0
-                            print(f"落下終了の条件を満たしませんでした")
-                            make_csv.print("msg", f"落下終了の条件を満たしませんでした")
+                            print(f"not satisfied condition of ending falling.")
+                            make_csv.print("msg", f"not satisfied condition of ending falling.")
                             time.sleep(1)
 
-                    make_csv.print("msg","ニクロム線切断開始")
-                    print("ニクロム線切断開始")
+                    make_csv.print("msg","start nichrome wire")
+                    print("start nichrome wire")
                             
                     #ここにニクロム線を切るコード
                     #ニクロム線切断
@@ -202,8 +202,8 @@ def main():
                     time.sleep(15) # 15秒温める
                             
                     GPIO.output(nichrome_pin, 0)
-                    make_csv.print("msg","ニクロム線切断完了")
-                    print("ニクロム線切断完了")
+                    make_csv.print("msg","finish nichrome wire")
+                    print("finish nichrome wire")
                             
                     #ニクロム線を切ったあと
 
@@ -270,6 +270,7 @@ def main():
                     # 距離と角度を計算し、表示
                     distance_to_goal, angle_to_goal = gps.calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon, goal_lat, goal_lon)
                     print("現在地からゴール地点までの距離:", distance_to_goal, "メートル")
+                    make_csv.print('goal_distance', distance_to_goal)
                     print("theta_for_goal°:", str(angle_to_goal * 180 / math.pi) + "°")
                     make_csv.print('goal_relative_angle_rad', angle_to_goal)
                     
@@ -361,7 +362,7 @@ def main():
                         picam2.configure(config)  # カメラの初期設定
                         picam2.start()
                         cam_flag = True
-                        make_csv.print("msg", "カメラ初期化完了")
+                        make_csv.print("msg", "finish init camera")
 
                     # フレームを取得
                     frame = picam2.capture_array()
@@ -441,7 +442,7 @@ def main():
                                 print(f"超音波が距離を取得できませんでした({timeout_count}回目)")
                                 if timeout_count == 10 or timeout_count == 20:
                                     # 10回or20回連続Noneだった場合は専用の例外を投げる
-                                    raise NoneDistanceError("距離が取得できませんでした（None）")
+                                    raise NoneDistanceError("can't get distance（None）")
                                 goal_distance = ultrasonic.distance()
                                 print(f"goal_distance: {goal_distance} cm")
                                 make_csv.print("goal_distance", goal_distance)
@@ -465,16 +466,18 @@ def main():
                         except NoneDistanceError as e:
                             if timeout_count == 10:#10回取得できなかったら前進し，カメラ認識も行う
                                 print("超音波が距離を取得できなかったため強制的に前進します")
+                                make_csv.print("msg", "Ultrasonics can't obtain distance. Moving forward.")
                                 motordrive.move('w', 0.8, 0.1)
                             elif timeout_count == 20:#20回取得できなかったらフェーズ移行:
                                 print("強制前進後,超音波が距離を取得できなかったため，フェーズを強制移行します")
+                                make_csv.print("msg", "End of forward. goal phase.")
                                 phase = 4
                                 make_csv.print("phase", 4)
                                 print("ended short phase")
                                 make_csv.print("msg", "ended short phase")
 
                         except Exception as e:
-                            print(f"エラーが発生(phase3,camera_order == 4):{e}")
+                            print(f"An error occured (phase3,camera_order == 4):{e}")
 
                 except Exception as e:
                     print(f"An error occured in phase 3: {e}")
