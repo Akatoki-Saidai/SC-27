@@ -316,11 +316,11 @@ def main():
                             time.sleep(1)
 
                         ###5秒前進 & スタック検知###
-                        is_stacked = motordrive.move('w', 1.0, 5.0)
+                        is_stucked = motordrive.move('w', 1.0, 5.0)
                         make_csv.print("motor_r", 1.0)
                         make_csv.print("motor_l", 1.0)
                         #スタック検知がyesの場合、スタックしたときの処理が行われる
-                        motordrive.check_stuck(is_stacked)
+                        motordrive.check_stuck(is_stucked)
                         if is_stucked == 1:
                             make_csv.print("msg", "stack move")
                         
