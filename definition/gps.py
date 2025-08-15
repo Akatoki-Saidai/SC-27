@@ -58,6 +58,7 @@ class GpsManager:
                 
                 for line in line_list:
                     try:
+                        print(f"NMEA: {line.strip()}")
                         msg = pynmea2.parse(line)
 
                         # 有効な緯度経度データかチェック
