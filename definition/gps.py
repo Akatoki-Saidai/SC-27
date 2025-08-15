@@ -48,6 +48,7 @@ class GpsManager:
 
         try:
             # バッファのデータ全て読み込み
+            time.sleep(1)
             if self.ser.in_waiting > 0:
                 buffer = self.ser.read(self.ser.in_waiting).decode('ascii', errors='replace')
                 line_list = buffer.split('\n')

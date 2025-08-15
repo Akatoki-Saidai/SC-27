@@ -48,6 +48,7 @@ class GpsManager:
 
         try:
             # バッファのデータ全て読み込み
+            time.sleep(1)
             if self.ser.in_waiting > 0:
                 buffer = self.ser.read(self.ser.in_waiting).decode('ascii', errors='replace')
                 line_list = buffer.split('\n')
@@ -156,7 +157,7 @@ def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon,
     except Exception as e:
         print(f"移動していません: {e}")
         return 2727272727, math.pi * 2
-    
+
 
 def zenbu():
     global gps_manager
@@ -170,7 +171,3 @@ def zenbu():
     except serial.SerialException as e:
         print(f"Serial error: {e}")
         return None
-
-
-
-
