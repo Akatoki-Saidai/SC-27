@@ -1,3 +1,5 @@
+import make_csv
+
 # センサーの値を補正する関数
 
 # 異常値範囲テーブル(合計値) 
@@ -59,6 +61,7 @@ def abnormal_check(sensor_name, value_name, sensor_value, ERROR_FLAG=True):
             else:
                 filtered_value = None
                 try:
+                    make_csv.print("msg", f"ijochi detected: {sensor_name} {value_name} out of range")
                     if ERROR_FLAG:
                         raise ValueError(f"{sensor_name} {value_name} is abnormal - {sensor_value}")
                     else:
