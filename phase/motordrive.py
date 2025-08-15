@@ -261,7 +261,7 @@ if __name__ == "__main__":
     GPIO.setup(PIN_VM, GPIO.OUT)
     GPIO.setup(PIN_LEFT_BACKWARD, GPIO.OUT)
     GPIO.setup(PIN_LEFT_FORWARD, GPIO.OUT)
-    GPIO.setup(PIN_RIGHT_FORWARD, GPIO.OUT)
+    GPIO.setup(PIN_RIGHT_BACKWARD, GPIO.OUT)
     GPIO.setup(PIN_RIGHT_FORWARD, GPIO.OUT)
     
     try:
