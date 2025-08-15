@@ -9,7 +9,7 @@ import pyproj
 from bno055 import BNO055
 # from bme280 import BME280Sensor
 import motordrive
-import gps_archive as gps
+import gps
 import make_csv
 
 ##################################################

@@ -12,7 +12,7 @@ from picamera2 import Picamera2
 from bno055 import BNO055
 from bme280 import BME280Sensor
 import motordrive
-import gps_archive as gps
+import gps
 import make_csv
 import camera as cam
 import hcsr04 as ultrasonic
