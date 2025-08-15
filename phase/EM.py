@@ -178,7 +178,7 @@ def main():
                         accel_sum = abs(accel_x) + abs(accel_y) + abs(accel_z)
                         make_csv.print("msg", f"fall detection: accel_sum={accel_sum:.3f} < 0.5, alt={alt_2:.3f} <= 0.1")
 
-                        if abs(accel_x) + abs(accel_y) + abs(accel_z) < 0.5 and alt_2 <= 0.1:
+                        if abs(accel_x) + abs(accel_y) + abs(accel_z) < 0.5 and alt_2 <= 1.0:
                             consecutive_count += 1
                             print(f"satisfied condition of ending falling: {consecutive_count}/5")
                             make_csv.print("msg", f"satisfied condition of ending falling: {consecutive_count}/5")
