@@ -217,6 +217,7 @@ def main():
                         time.sleep(0.5)
                         count_gps += 1
                         if count_gps >= gps_count_out:
+                            make_csv.print("msg", "gps_timeout_start_pos")
                             phase = 3
                             make_csv.print("phase", 3)
                             # break
@@ -240,6 +241,7 @@ def main():
                         current_lat, current_lon = gps.idokeido()
                         time.sleep(0.5)
                         if count_gps >= gps_count_out:
+                            make_csv.print("msg", "gps_timeout_current_pos")
                             phase = 3
                             make_csv.print("phase", 3)
                             # break
@@ -316,7 +318,8 @@ def main():
                         make_csv.print("motor_l", 1.0)
                         #スタック検知がyesの場合、スタックしたときの処理が行われる
                         motordrive.check_stuck(is_stacked)
-                        make_csv.print("msg", "stack move")
+                        if is_stucked == 1:
+                            make_csv.print("msg", "stack move")
                         
                         #モーター止める
                         motordrive.stop()
@@ -332,6 +335,7 @@ def main():
                         print(f"cannot get current_lat, current_lon. {count_gps * 10} seconds. retry")
                         time.sleep(0.5)
                         if count_gps >= gps_count_out:
+                            make_csv.print("msg", "gps_timeout_update_pos")
                             phase = 3
                             make_csv.print("phase", 3)
                             # break
