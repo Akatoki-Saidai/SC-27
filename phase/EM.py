@@ -212,15 +212,15 @@ def main():
                     # 初期位置の緯度経度を取得
                     start_lat, start_lon = None, None
                     while start_lat is None and start_lon is None:
-                        print(f"cannot get start_lat, start_lon. {count_gps * 10} seconds. retry")
                         start_lat, start_lon = gps.idokeido()
+                        print(f"cannot get start_lat, start_lon. {count_gps * 10} seconds. retry")
                         time.sleep(0.5)
                         count_gps += 1
                         if count_gps >= gps_count_out:
                             make_csv.print("msg", "gps_timeout_start_pos")
                             phase = 3
                             make_csv.print("phase", 3)
-                            # break
+                            break
                     start_lat = ijochi.abnormal_check("gps", "latitude", start_lat, ERROR_FLAG=True)
                     start_lon = ijochi.abnormal_check("gps", "longitude", start_lon, ERROR_FLAG=True)
                     count_gps = 0
@@ -237,14 +237,15 @@ def main():
                     #5秒進んだ先での現在位置を得る
                     current_lat, current_lon = None, None
                     while current_lat is None and current_lon is None:
-                        print(f"cannot get current_lat, current_lon. {count_gps * 10} seconds. retry")
                         current_lat, current_lon = gps.idokeido()
+                        print(f"cannot get current_lat, current_lon. {count_gps * 10} seconds. retry")
                         time.sleep(0.5)
+                        count_gps += 1
                         if count_gps >= gps_count_out:
                             make_csv.print("msg", "gps_timeout_current_pos")
                             phase = 3
                             make_csv.print("phase", 3)
-                            # break
+                            break
                     current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
                     current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                     count_gps = 0
@@ -284,7 +285,9 @@ def main():
                             print("移動していない判定が27回に達しました。強制的に近距離フェーズに移行します。")
                             phase = 3
                             make_csv.print("phase", 3)
-                            # break  # whileループを抜けて近距離フェーズに移行
+                            # break
+                            # if文を抜けて近距離フェーズに移行
+                            # やばいコードミスに気付いてくださってありがとうございます
                     else:
                         no_movement_count = 0  # 移動が検出されたらカウンターをリセット
 
@@ -333,12 +336,13 @@ def main():
                     while current_lat is None and current_lon is None:
                         current_lat, current_lon = gps.idokeido()
                         print(f"cannot get current_lat, current_lon. {count_gps * 10} seconds. retry")
+                        count_gps += 1
                         time.sleep(0.5)
                         if count_gps >= gps_count_out:
                             make_csv.print("msg", "gps_timeout_update_pos")
                             phase = 3
                             make_csv.print("phase", 3)
-                            # break
+                            break
                     current_lat = ijochi.abnormal_check("gps", "latitude", current_lat, ERROR_FLAG=True)
                     current_lon = ijochi.abnormal_check("gps", "longitude", current_lon, ERROR_FLAG=True)
                     count_gps = 0
@@ -401,6 +405,7 @@ def main():
 
                     # 結果に応じてモーターを駆動 1秒で120度回転
                     rotation_time = abs(relative_cone_x * 120) / 120
+                    make_csv.print("msg", f"rotation_time is {rotation_time}")
 
                     if camera_order == 0:
                         # コーンが見つからなかったとき
@@ -443,6 +448,7 @@ def main():
                             #超音波が測定失敗した場合，測定を繰り返す
                             while goal_distance is None:
                                 timeout_count += 1
+                                make_csv.print("msg", f"ultrasonic_timeout {timeout_count} times")
                                 print(f"超音波が距離を取得できませんでした({timeout_count}回目)")
                                 if timeout_count == 10 or timeout_count == 20:
                                     # 10回or20回連続Noneだった場合は専用の例外を投げる
@@ -453,9 +459,9 @@ def main():
 
                             if goal_distance < 60:
                                 timeout_count = 0
-                                motordrive.move('w', 0.8, 0.1)
-                                make_csv.print("motor_r", 0.8)
-                                make_csv.print("motor_l", 0.8)
+                                motordrive.move('w', 1.0, 0.5)
+                                make_csv.print("motor_r", 1.0)
+                                make_csv.print("motor_l", 1.0)
                                 phase = 4
                                 make_csv.print("phase", 4)
                                 print("ended short phase")
@@ -496,6 +502,7 @@ def main():
                     pass
                     print("goal goal goal")
                     make_csv.print("msg", "goal goal goal")
+                    print("本当におめでとう，そしてありがとう．")
                 
                 except Exception as e:
                     print(f"An error occured in phase 4: {e}")
