@@ -231,10 +231,16 @@ def check_stuck(is_stacked):
             make_csv.print("warning", "Stacking detected!")
 
             move('s', 1.0, 3)
+            make_csv.print("motor_r", -1.0)
+            make_csv.print("motor_l", -1.0)
             time.sleep(0.5)
             move('d', 1.0, 1)
+            make_csv.print("motor_r", 1.0)
+            make_csv.print("motor_l", -1.0)
             time.sleep(0.5)
             move('w', 1.0, 2)
+            make_csv.print("motor_r", 1.0)
+            make_csv.print("motor_l", 1.0)
             time.sleep(0.5)
             stop()
             
