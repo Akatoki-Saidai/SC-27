@@ -176,9 +176,9 @@ def main():
 
                         # 判断に用いた測定データを記録
                         accel_sum = abs(accel_x) + abs(accel_y) + abs(accel_z)
-                        make_csv.print("msg", f"落下判定: accel_sum={accel_sum:.3f} < 0.1, alt={alt_2:.3f} <= 0.1")
+                        make_csv.print("msg", f"落下判定: accel_sum={accel_sum:.3f} < 0.5, alt={alt_2:.3f} <= 0.1")
 
-                        if abs(accel_x) + abs(accel_y) + abs(accel_z) < 0.1 and alt_2 <= 0.1:
+                        if abs(accel_x) + abs(accel_y) + abs(accel_z) < 0.5 and alt_2 <= 0.1:
                             consecutive_count += 1
                             print(f"落下終了の条件を満たしました: {consecutive_count}/5")
                             make_csv.print("msg", f"落下終了の条件を満たしました: {consecutive_count}/5")
