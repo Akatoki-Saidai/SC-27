@@ -5,10 +5,10 @@ from datetime import datetime, timedelta
 import pyproj
 import math
 
-port = "/dev/serial0"
-baudrate = 38400
+PORT = "/dev/serial0"
+BAUDRATE = 38400
 
-goal_lat, goal_lon = 40.14389563045866, 139.98732883121738 # 能代宇宙広場 (ゴール地点)
+goal_lat, goal_lon = 40.142661833333335, 139.9876495 # 能代宇宙広場 (ゴール地点)
 
 # pyprojを使ってWGS84楕円体に基づく投影を定義
 wgs84 = pyproj.CRS('EPSG:4326')
@@ -51,6 +51,7 @@ class GpsManager:
             if self.ser.in_waiting > 0:
                 buffer = self.ser.read(self.ser.in_waiting).decode('ascii', errors='replace')
                 line_list = buffer.split('\n')
+                print(f"line_list: {line_list}")
 
                 temp_lat = None
                 temp_lon = None
@@ -88,9 +89,11 @@ class GpsManager:
             self.ser = None
 
       
-gps_manager = GpsManager(port, baudrate)
+gps_manager = GpsManager(PORT, BAUDRATE)
 
 def idokeido():
+    global gps_manager
+
     # 緯度と経度を抽出、内部でGPSデータを最新に更新
     gps_manager.update()
     latitude = gps_manager.latitude
@@ -103,6 +106,8 @@ def idokeido():
     return latitude, longitude
 
 def zikan():
+    global gps_manager
+
     # 日本時間を抽出、内部でGPSデータを最新に更新
     gps_manager.update()
     time_jst = gps_manager.timestamp_jst
@@ -151,3 +156,5 @@ def calculate_distance_and_angle(current_lat, current_lon, start_lat, start_lon,
     except Exception as e:
         print(f"移動していません: {e}")
         return 2727272727, math.pi * 2
+
+
