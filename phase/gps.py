@@ -52,7 +52,7 @@ class GpsManager:
             if self.ser.in_waiting > 0:
                 buffer = self.ser.read(self.ser.in_waiting).decode('ascii', errors='replace')
                 line_list = buffer.split('\n')
-                print(f"line_list: {line_list}")
+                # print(f"line_list: {line_list}")
 
                 temp_lat = None
                 temp_lon = None
@@ -60,7 +60,7 @@ class GpsManager:
                 
                 for line in line_list:
                     try:
-                        print(f"NMEA: {line.strip()}")
+                        # print(f"NMEA: {line.strip()}")
                         msg = pynmea2.parse(line)
 
                         # 有効な緯度経度データかチェック
