@@ -1,4 +1,4 @@
-import gps_archive as gps
+import gps
 
 # 使用例
 if __name__ == '__main__':
